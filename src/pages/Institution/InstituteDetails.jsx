@@ -11,7 +11,7 @@ import {
 import StatisticsCard from "@/components/dashboard/StatisticCard";
 import BackBtn from "@/components/Custom/Buttons/BackBtn";
 
-export function InstituteData() {
+export function InstituteDetails() {
   const { session } = useSession();
   const token = session?.token;
   const { id } = useParams(); // Get the institution ID from the URL

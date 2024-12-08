@@ -9,7 +9,6 @@
 @font-face {
   font-family: AzoSans_Light;
   src: url("/src/assets/fonts/AzoSans-Light.ttf");
-
 }
 
 @font-face {
@@ -114,31 +113,70 @@ body {
     border-radius: 8px !important;
     font-size: small;
     /* color: #667085 !important; */
-    border: 1px solid #D0D5DD !important;
+    border: 1px solid #d0d5dd !important;
   }
 
   .accent-appGreen {
-    accent-color: #247A84 !important;
+    accent-color: #247a84 !important;
   }
   .accent-appOrange {
     accent-color: #ea580c !important;
   }
- 
+  .custom-card .ant-card-head-title {
+    color: white; /* Make the title text white */
+  }
 
-  .bg-appOrange{
+
+  .gold-outline-btn {
+    background: transparent;
+    border: 2px solid gold;
+    color: gold;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px; /* Add some space above the button */
+  }
+  
+  .gold-outline-btn:hover {
+    background: gold;
+    color: white;
+  }
+  .teal-outline-btn {
+    background: transparent;
+    border: 2px solid teal;
+    color: teal;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px; /* Add some space above the button */
+  }
+  
+  .teal-outline-btn:hover {
+    background: teal;
+    color: white;
+  }
+  
+  .bg-olive {
+    background-color: #ecf7f5 !important;
+  }
+  .bg-appOrange {
     background-color: #ea580c !important;
   }
 
-  .bg-appOrangeLight{
+  .bg-appOrangeLight {
     background-color: #fa7a35 !important;
   }
 
-  
-  .bg-appBlue{
-    background-color: #002B4D !important;
-    color: #FFF;
+  .bg-appBlue {
+    background-color: #002b4d !important;
+    color: #fff;
   }
-  .bg-appBlueLight, .bg-primary{
+  .bg-appBlueLight,
+  .bg-primary {
     background-color: #035fa5 !important;
   }
 
@@ -146,17 +184,17 @@ body {
     background-color: #16565d !important;
   }
 
-  .bg-appGreenLight{
-    background-color: #247A84 !important;
+  .bg-appGreenLight {
+    background-color: #247a84 !important;
   }
-  .bg-gold{
-    background-color: #C8951A !important;
+  .bg-gold {
+    background-color: #c8951a !important;
   }
-  .bg-gold-light{
+  .bg-gold-light {
     background-color: #fab91f !important;
   }
-  
-  .text-appOrange{
+
+  .text-appOrange {
     color: #ea580c !important;
   }
 
@@ -164,7 +202,7 @@ body {
     margin-bottom: 20px;
     text-align: right;
   }
-  
+
   .filter-btn {
     padding: 10px;
     background-color: #0088cc;
@@ -180,15 +218,29 @@ body {
     font-weight: bold;
     font-size: 12px;
   }
-  
+
+  .custom-tabs .ant-tabs-tab-active {
+    background-color: #f0f9ff; /* Light blue background */
+    border-radius: 6px; /* Rounded corners */
+    font-weight: bold; /* Bold text */
+    color: #1d4ed8 !important; /* Dark blue text */
+  }
+
+  .custom-tabs .ant-tabs-tab:hover {
+    background-color: #e0f2fe; /* Lighter blue on hover */
+  }
+
+  .custom-tabs .ant-tabs-tab {
+    transition: all 0.3s ease-in-out;
+  }
+
   .filter-btn.active {
     background-color: #005fa3;
   }
-  
+
   .filter-btn:hover {
     background-color: #007bff;
   }
-  
 
   @keyframes clickEffect {
     0% {
@@ -209,7 +261,6 @@ body {
     }
   }
 }
-
 
 @keyframes saved_slide {
   0% {
@@ -234,7 +285,6 @@ body {
   }
 }
 
-
 .custom-tabs .ant-tabs-tab {
   flex: 1;
   text-align: left;
@@ -245,11 +295,11 @@ body {
 }
 
 .custom-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
-  color: #002B4D !important;
+  color: #002b4d !important;
 }
 
 .custom-tabs .ant-tabs-ink-bar {
-  background-color: #002B4D;
+  background-color: #002b4d;
 }
 
 .default {

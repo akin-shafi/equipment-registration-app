@@ -4,13 +4,16 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { InstitutionDashboard } from "./pages/InstitutionDashboard";
 import { AdminPage } from "./pages/Admin";
 import { AssessorPage } from "./pages/Assessor";
-
 import { UserManagementPage } from "./pages/Users/UserManagementPage";
 import UserDetails from "./pages/Users/UserDetails"; // Import UserDetails component
 import { InstitutionManagementPage } from "./pages/Admin/List/InstitutionManagementPage";
 import { ListEquipmentPage } from "./pages/Admin/List/ListEquipmentPage";
-import { InstituteData } from "./pages/Assessor/instituteData";
+import { InstitutionPage } from "./pages/Institution";
+import { InstituteDetails } from "./pages/Institution/InstituteDetails";
+
+import { Equipment } from "./pages/Equipment";
 import { AddEquipment } from "./pages/Assessor/addEquipment";
+import { OnboardingPage } from "./pages/Onboarding";
 
 function App() {
   return (
@@ -18,6 +21,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/institution" element={<InstitutionDashboard />} />
         <Route path="/admin" element={<AdminPage />} />
@@ -25,7 +29,10 @@ function App() {
         <Route path="/all-users" element={<UserManagementPage />} />
         <Route path="/user/:id" element={<UserDetails />} />
         <Route path="/add-equipment/:id" element={<AddEquipment />} />
-        <Route path="/institution-details/:id" element={<InstituteData />} />
+        <Route path="/equipment/" element={<Equipment />} />
+        <Route path="/institutions" element={<InstitutionPage />} />
+        <Route path="/institution-details/:id" element={<InstituteDetails />} />
+
         <Route path="*" element={<AssessorPage />} />
         <Route
           path="/all-institutions"

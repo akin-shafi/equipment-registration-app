@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Input, Select, Button } from "antd";
+import { Modal, Form, Input, Select, Button, Row, Col } from "antd";
 import { fetchRoles, fetchInstitution } from "@/hooks/useAction"; // Import fetchRoles and fetchInstitution
 
 export function UserModal({
@@ -9,6 +9,7 @@ export function UserModal({
   onClose,
   onSubmit,
   user = null,
+  showCloseIcon = true,
   tagsOptions = [], // Old tagsOptions prop, will be replaced with fetched institutions
 }) {
   const [form] = Form.useForm();
@@ -62,21 +63,24 @@ export function UserModal({
   return (
     <Modal
       open={visible}
-      title={isEdit ? "Edit User" : "Create New User"}
+      title={isEdit ? "Edit Member" : "Create New Member"}
       onCancel={onClose}
       footer={[
-        <Button key="cancel" className="rounded-full" onClick={onClose}>
-          Cancel
-        </Button>,
+        showCloseIcon && (
+          <Button key="cancel" className="rounded-full" onClick={onClose}>
+            Cancel
+          </Button>
+        ),
         <Button
           key="submit"
           type="primary"
-          className="bg-appGreen hover:bg-appGreenLight rounded-full"
+          className="bg-appGreen hover:bg-appGreenLight rounded-full w-full"
           onClick={() => form.submit()}
         >
-          {isEdit ? "Save Changes" : "Create User"}
+          {isEdit ? "Save Changes" : "Submit"}
         </Button>,
       ]}
+      closeIcon={showCloseIcon ? undefined : null} // Hide close icon based on showCloseIcon state
     >
       <Form
         form={form}
@@ -84,24 +88,35 @@ export function UserModal({
         onFinish={handleFinish}
         initialValues={{ tags: [] }}
       >
-        <Form.Item
-          name="fullname"
-          label="Full Name"
-          rules={[{ required: true, message: "Please enter the full name" }]}
-        >
-          <Input placeholder="Enter full name" />
-        </Form.Item>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item
+              name="fullname"
+              label="Full Name"
+              rules={[
+                { required: true, message: "Please enter the full name" },
+              ]}
+            >
+              <Input placeholder="Enter full name" />
+            </Form.Item>
+          </Col>
 
-        <Form.Item
-          name="email"
-          label="Email"
-          rules={[
-            { required: true, message: "Please enter a valid email" },
-            { type: "email", message: "Please enter a valid email address" },
-          ]}
-        >
-          <Input placeholder="Enter email address" />
-        </Form.Item>
+          <Col span={12}>
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[
+                { required: true, message: "Please enter a valid email" },
+                {
+                  type: "email",
+                  message: "Please enter a valid email address",
+                },
+              ]}
+            >
+              <Input placeholder="Enter email address" />
+            </Form.Item>
+          </Col>
+        </Row>
 
         {!isEdit && (
           <Form.Item

@@ -1,11 +1,17 @@
 /* eslint-disable react/prop-types */
 import StatAvatar from "@/assets/stat-avatar.svg";
 
-export default function StatisticsCard({ detail, title, color = "#F2FAFF" }) {
+export default function StatisticsCard({
+  detail,
+  title,
+  color = "#F2FAFF",
+  onClick,
+}) {
   return (
     <div
       style={{ backgroundColor: color }}
       className="w-full md:h-[110px] cursor-pointer h-[100px] rounded-[8px] border border-[#F9FAFB] hover:bg-appBlue p-2 flex flex-col justify-between"
+      onClick={onClick} // Attach the onClick handler here
     >
       <img
         src={StatAvatar}

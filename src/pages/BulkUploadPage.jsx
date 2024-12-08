@@ -61,9 +61,14 @@ export function BulkUploadPage({ institutionId, applicationNo }) {
   };
 
   const handleDownloadTemplate = () => {
+    setIsDownloading(true);
     const templateUrl =
       "https://docs.google.com/spreadsheets/d/1ZRjMLZMZMOYvbUazll0J44Paql6cdDWe/edit?gid=1161773019#gid=1161773019";
     window.open(templateUrl, "_blank");
+    setTimeout(() => {
+      setIsDownloading(false);
+      alert("Your excel template for bulk upload has been downloaded.");
+    }, 2000);
   };
 
   const handleBulkUploadSubmit = async (e) => {
@@ -105,19 +110,17 @@ export function BulkUploadPage({ institutionId, applicationNo }) {
 
   return (
     <>
-      <div className="w-full h-[170px] rounded-[12px] flex items-center justify-between bg-secondary p-4">
-        <div className="md:basis-[50%] basis-full text-white h-full flex flex-col justify-center gap-2">
+      <div className="w-full h-[170px] rounded-[12px] flex items-center justify-between bg-olive p-4">
+        <div className="md:basis-[70%] basis-full text-secondary h-full flex flex-col justify-center gap-2">
           <h6 className="text-[10px] font-bold">INSTRUCTIONS</h6>
           <h2 className="md:text-[20px] text-[16px] font-bold">
-            Bulk Equipment Upload
+            Bulk Equipment Upload!.
           </h2>
           <p className="md:text-[14px] text-[12px] font-light">
             Download the template to easily upload multiple equipment records in
-            bulk. Stay organized and streamline your inventory management with
-            ease.
+            bulk.
           </p>
         </div>
-
         <div className="md:basis-[30%] basis-0 md:flex hidden w-full h-full items-center justify-center">
           <button
             className="py-[10px] px-[20px] bg-appGreen rounded-[100px] text-white"
@@ -130,6 +133,58 @@ export function BulkUploadPage({ institutionId, applicationNo }) {
       </div>
 
       <div className="mt-8 w-full bg-white p-6 rounded-lg shadow-md">
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          <ol className="border shadow-md px-6 py-3 list-decimal list-inside">
+            <h3 className="font-bold text-[15px] mb-2 border-b">
+              Step 1: Download Sample Sheet
+            </h3>
+            <li>
+              Click{" "}
+              <b
+                onClick={handleDownloadTemplate}
+                className="text-appGreen cursor-pointer hover:text-black hover:underline"
+              >
+                "Download Template"
+              </b>{" "}
+              to access the sample Google Sheet.
+            </li>
+            <li>Download the sheet to your device and make your own copy.</li>
+          </ol>
+          <ol className="border shadow-md px-6 py-3 list-decimal list-inside">
+            <h3 className="font-bold text-[15px] mb-2 border-b">
+              Step 2: Data Entry
+            </h3>
+            <li>Replace the sample data in the sheet with your own data.</li>
+            <li>
+              Ensure the <b className="text-appGreen">"Serial No"</b> column
+              starts from 100 and follows the sequence.
+            </li>
+            <li>
+              For the <b className="text-appGreen">"Image"</b> column, upload
+              images of your equipment to Google Drive and include the link to
+              each image in the corresponding row.
+            </li>
+            <li>
+              Save the document as an Excel file with the extension{" "}
+              <code>.XLSX</code>.
+            </li>
+          </ol>
+          <ol className="border shadow-md px-6 py-3 list-decimal list-inside">
+            <h3 className="font-bold text-[15px] mb-2 border-b">
+              Step 3: Upload Pre-filled Sheet
+            </h3>
+            <li>
+              Click the <b className="text-appGreen">"Upload"</b> button below
+              to select the sheet from your device.
+            </li>
+            <li>
+              Finally, click{" "}
+              <b className="text-appGreen">"Upload Excel Sheet"</b> to complete
+              the process.
+            </li>
+          </ol>
+        </div>
+
         <h3 className="text-xl font-bold mb-4">Bulk Equipment Upload</h3>
         <form onSubmit={handleBulkUploadSubmit}>
           <div className="my-5">
@@ -161,7 +216,7 @@ export function BulkUploadPage({ institutionId, applicationNo }) {
               <p className="text-sm text-yellow-600">
                 The following rows were skipped during the upload process:
               </p>
-              <ul className="mt-2 list-disc list-inside">
+              <ul className="mt-2 list-decimal list-inside list-inside">
                 {skippedRows.map((row, index) => (
                   <li key={index} className="text-yellow-800">
                     {typeof row === "string"

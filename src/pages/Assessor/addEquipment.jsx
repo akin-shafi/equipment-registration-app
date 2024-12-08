@@ -46,10 +46,10 @@ export function AddEquipment() {
   }, [id, token]);
   return (
     <DashboardLayout>
-      <div className="w-full  grid grid-rows-[10%_1fr] md:px-12 px-5 py-3">
+      <div className="w-full  grid grid-rows-[10%_1fr] md:px-12 px-5 py-3 ">
         <BackBtn />
 
-        <div className="w-full h-[8%] flex justify-between md:gap-0 gap-4 mt-1">
+        <div className="w-full h-[8%] flex justify-between md:gap-0 gap-4 ">
           <div className="">
             <h5 className="md:text-[20px] text-[16px] font-medium text-black">
               Equipment Register
@@ -70,16 +70,16 @@ export function AddEquipment() {
             // className="w-full "
             className="custom-tabs w-full"
           >
-            <TabPane tab="Single Upload" key="1">
-              {/* Pass id as a prop to SingleUploadPage */}
-              <SingleUploadPage institutionId={id} />
-            </TabPane>
-            <TabPane tab="Bulk Upload" key="2">
+            <TabPane tab="Bulk Upload" key="1">
               {/* Pass id as a prop to BulkUploadPage */}
               <BulkUploadPage
                 institutionId={id}
                 applicationNo={applicationNo}
               />
+            </TabPane>
+            <TabPane tab="Single Upload" key="2">
+              {/* Pass id as a prop to SingleUploadPage */}
+              <SingleUploadPage institutionId={id} />
             </TabPane>
           </Tabs>
         </div>
