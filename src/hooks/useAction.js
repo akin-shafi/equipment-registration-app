@@ -200,8 +200,9 @@ export const fetchEquipment = async (token) => {
       throw new Error(errorData.message || "Failed to fetch room types.");
     }
 
-    const data = await response.json();
-    console.log();
+    const result = await response.json();
+    const data = result.equipments;
+    console.log("Equipment", data);
     // Ensure that data is always an array
     return Array.isArray(data) ? data : [];
   } catch (error) {

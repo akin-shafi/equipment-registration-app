@@ -111,7 +111,7 @@ export function ListEquipmentPage() {
           <Button
             type="primary"
             className="bg-appGreen hover:bg-appGreenLight"
-            onClick={() => navigate("/equipment/add")} // Navigate to the add equipment page
+            onClick={() => navigate("/equipment")} // Navigate to the add equipment page
             style={{ marginLeft: "auto" }}
           >
             Add Equipment

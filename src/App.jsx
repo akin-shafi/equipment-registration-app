@@ -12,7 +12,7 @@ import { InstitutionPage } from "./pages/Institution";
 import { ListEquipments } from "./pages/Equipment/ListEquipments";
 
 import { Equipment } from "./pages/Equipment";
-import { AddEquipment } from "./pages/Assessor/addEquipment";
+import { AddEquipment } from "./pages/Equipment/addEquipment";
 import { OnboardingPage } from "./pages/Onboarding";
 import { AssetsPage } from "./pages/Assets";
 import AddAssets from "./pages/Assets/AddAssets";
