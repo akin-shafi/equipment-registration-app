@@ -9,7 +9,7 @@ import {
   fetchInstitutionById,
 } from "@/hooks/useAction";
 import StatisticsCard from "@/components/dashboard/StatisticCard";
-import BackBtn from "@/components/Custom/Buttons/BackBtn";
+import BackBtn from "@/components/custom/buttons/BackBtn";
 
 export function ListEquipments() {
   const { session } = useSession();

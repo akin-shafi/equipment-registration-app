@@ -6,7 +6,7 @@ import { SingleUploadPage } from "../SingleUploadPage";
 import { BulkUploadPage } from "../BulkUploadPage";
 import { fetchInstitutionById } from "@/hooks/useAction";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import BackBtn from "@/components/Custom/Buttons/BackBtn";
+import BackBtn from "@/components/custom/buttons/BackBtn";
 
 const { TabPane } = Tabs;
 

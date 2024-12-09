@@ -5,7 +5,7 @@ import { useSession } from "@/hooks/useSession";
 import { fetchInstitutionsByIds } from "@/hooks/useAction";
 import { Card, Row, Col, Spin, Empty } from "antd";
 import { useNavigate } from "react-router-dom";
-import BackBtn from "@/components/Custom/Buttons/BackBtn";
+import BackBtn from "@/components/custom/buttons/BackBtn";
 
 export function Equipment() {
   const { session } = useSession();
@@ -46,7 +46,7 @@ export function Equipment() {
         <BackBtn />
       </div>
       <div
-      className="mt-10"
+        className="mt-10"
         style={{
           display: "flex",
           justifyContent: "center",

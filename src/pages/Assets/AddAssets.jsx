@@ -8,7 +8,7 @@ import { Spin, Select, Input } from "antd"; // for Ant Design components
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import cameraImage from "../../assets/images/camera.jpeg";
 import { fetchInstitutionById } from "@/hooks/useAction";
-import BackBtn from "@/components/Custom/Buttons/BackBtn";
+import BackBtn from "@/components/custom/buttons/BackBtn";
 
 const AddAssets = () => {
   const initialRow = {
