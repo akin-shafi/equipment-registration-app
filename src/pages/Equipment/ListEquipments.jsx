@@ -11,7 +11,7 @@ import {
 import StatisticsCard from "@/components/dashboard/StatisticCard";
 import BackBtn from "@/components/Custom/Buttons/BackBtn";
 
-export function InstituteDetails() {
+export function ListEquipments() {
   const { session } = useSession();
   const token = session?.token;
   const { id } = useParams(); // Get the institution ID from the URL
@@ -123,7 +123,7 @@ export function InstituteDetails() {
 
           <div className="flex justify-between">
             <h5 className="md:text-[24px] text-[18px] text-black font-medium text-uupercase mb-4 mt-4">
-              Institution Details
+              Equipments
             </h5>
 
             <div

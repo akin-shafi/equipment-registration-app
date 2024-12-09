@@ -268,3 +268,91 @@ export const sendBulkEquipment = async (data, token) => {
     throw new Error(error.message || "Error during bulk upload");
   }
 };
+
+// ==================== Assets ====================//
+
+// DELETE an asset by ID
+export const deleteAssetById = async (id, token) => {
+  const response = await fetch(`${API_BASE_URL}/assets/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error("Failed to delete asset");
+};
+
+// POST a new asset
+export const createAsset = async (data, token) => {
+  const response = await fetch(`${API_BASE_URL}/assets`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return response.json();
+};
+
+// PUT update an asset by ID
+export const updateAsset = async (id, data, token) => {
+  const response = await fetch(`${API_BASE_URL}/assets/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return response.json();
+};
+
+// GET all assets
+export const fetchAssets = async (token) => {
+  const response = await fetch(`${API_BASE_URL}/assets`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.json();
+};
+
+// GET assets by institution ID
+// export const fetchAssetsByInstitutionId = async (institutionId, token) => {
+//   const response = await fetch(
+//     `${API_BASE_URL}/assets/by-institution/${institutionId}`,
+//     {
+//       method: "GET",
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     }
+//   );
+//   return response.json();
+// };
+
+export const fetchAssetsByinstitutionId = async (institutionId, token) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/assets/by-institution/${institutionId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to fetch room types.");
+    }
+
+    const data = await response.json();
+    // const data = result.institutions;
+    console.log("fetchInstitution data", data);
+    // Ensure that data is always an array
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    throw new Error(error.message || "Error fetching room types.");
+  }
+};

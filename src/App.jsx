@@ -9,11 +9,13 @@ import UserDetails from "./pages/Users/UserDetails"; // Import UserDetails compo
 import { InstitutionManagementPage } from "./pages/Admin/List/InstitutionManagementPage";
 import { ListEquipmentPage } from "./pages/Admin/List/ListEquipmentPage";
 import { InstitutionPage } from "./pages/Institution";
-import { InstituteDetails } from "./pages/Institution/InstituteDetails";
+import { ListEquipments } from "./pages/Equipment/ListEquipments";
 
 import { Equipment } from "./pages/Equipment";
 import { AddEquipment } from "./pages/Assessor/addEquipment";
 import { OnboardingPage } from "./pages/Onboarding";
+import { AssetsPage } from "./pages/Assets";
+import AddAssets from "./pages/Assets/AddAssets";
 
 function App() {
   return (
@@ -31,7 +33,9 @@ function App() {
         <Route path="/add-equipment/:id" element={<AddEquipment />} />
         <Route path="/equipment/" element={<Equipment />} />
         <Route path="/institutions" element={<InstitutionPage />} />
-        <Route path="/institution-details/:id" element={<InstituteDetails />} />
+        <Route path="/assets/:id" element={<AssetsPage />} />
+        <Route path="/list-equipments/:id" element={<ListEquipments />} />
+        <Route path="/add-assets/:id" element={<AddAssets />} />
 
         <Route path="*" element={<AssessorPage />} />
         <Route
