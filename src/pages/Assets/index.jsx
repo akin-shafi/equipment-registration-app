@@ -175,22 +175,22 @@ export function AssetsPage() {
             <div className="md:basis-[50%] basis-full text-secondary h-full flex flex-col justify-center gap-2">
               <h6 className="text-[10px] font-bold">OVERVIEW</h6>
               <p className="md:text-[14px] text-[12px] font-light">
-                View all assets associated with your account.
+                View all site Photo associated with this institution.
               </p>
             </div>
-            <div className="md:basis-[30%] basis-0 md:flex hidden w-full h-full items-center justify-center">
+            <div className="md:basis-[30%] basis-0 md:flex w-full h-full items-center justify-center">
               <button
                 onClick={handleAddAssets}
                 className="py-[10px] px-[20px] bg-appGreen hover:bg-gold rounded-[100px] text-white"
               >
-                Add Asset
+                Add Photo
               </button>
             </div>
           </div>
 
           <div className="p-4 shadow-md">
             <h5 className="md:text-[24px] text-[18px] text-black font-medium border-b">
-              Assets List
+              Site Photo List
             </h5>
             <Table
               columns={columns}

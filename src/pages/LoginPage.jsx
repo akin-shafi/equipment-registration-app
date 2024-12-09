@@ -67,9 +67,7 @@ export function LoginPage() {
               height={100}
             /> */}
             <WhiteLogo />
-            <h1 className="text-1xl font-bold text-appGreen">
-              Research Equipment Database
-            </h1>
+            <h1 className="text-1xl font-bold text-appGreen">Baseline Study</h1>
           </div>
           {message && (
             <div className="mb-4 text-red-500 text-sm font-medium text-center">

@@ -320,20 +320,6 @@ export const fetchAssets = async (token) => {
   return response.json();
 };
 
-// GET assets by institution ID
-// export const fetchAssetsByInstitutionId = async (institutionId, token) => {
-//   const response = await fetch(
-//     `${API_BASE_URL}/assets/by-institution/${institutionId}`,
-//     {
-//       method: "GET",
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//       },
-//     }
-//   );
-//   return response.json();
-// };
-
 export const fetchAssetsByinstitutionId = async (institutionId, token) => {
   try {
     const response = await fetch(
@@ -355,5 +341,82 @@ export const fetchAssetsByinstitutionId = async (institutionId, token) => {
     return Array.isArray(data) ? data : [];
   } catch (error) {
     throw new Error(error.message || "Error fetching room types.");
+  }
+};
+
+// ================= Contact Person ======================//
+
+// DELETE a contact by ID
+export const deleteContactById = async (id, token) => {
+  const response = await fetch(`${API_BASE_URL}/contact-person/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error("Failed to delete contact");
+};
+
+// POST a new contact
+export const createContact = async (data, token) => {
+  const response = await fetch(`${API_BASE_URL}/contact-person`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error("Failed to create contact");
+  return response.json();
+};
+
+// PUT update a contact by ID
+export const updateContact = async (id, data, token) => {
+  const response = await fetch(`${API_BASE_URL}/contact-person/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) throw new Error("Failed to update contact");
+  return response.json();
+};
+
+// GET all contacts
+export const fetchContacts = async (token) => {
+  const response = await fetch(`${API_BASE_URL}/contact-person`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error("Failed to fetch contacts");
+  return response.json();
+};
+
+export const fetchContactsByInstitutionId = async (institutionId, token) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/contact-person/institution/${institutionId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to fetch contacts.");
+    }
+
+    const data = await response.json();
+    console.log("fetchContactsByInstitutionId data", data);
+
+    // Ensure that data is always an array
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    throw new Error(error.message || "Error fetching contacts.");
   }
 };

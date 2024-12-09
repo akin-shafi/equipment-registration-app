@@ -16,6 +16,7 @@ import { AddEquipment } from "./pages/Assessor/addEquipment";
 import { OnboardingPage } from "./pages/Onboarding";
 import { AssetsPage } from "./pages/Assets";
 import AddAssets from "./pages/Assets/AddAssets";
+import { ContactPage } from "./pages/Contact";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/assets/:id" element={<AssetsPage />} />
         <Route path="/list-equipments/:id" element={<ListEquipments />} />
         <Route path="/add-assets/:id" element={<AddAssets />} />
+        <Route path="/contact/:id" element={<ContactPage />} />
 
         <Route path="*" element={<AssessorPage />} />
         <Route

@@ -85,6 +85,13 @@ export function AssessorPage() {
           >
             Site Photos
           </button>
+
+          <button
+            onClick={() => navigate(`/contact/${record.id}`)}
+            className="bg-appGreen text-white px-3 py-1 rounded hover:bg-appGreenLight"
+          >
+            Contact Person
+          </button>
         </div>
       ),
     },
@@ -113,15 +120,15 @@ export function AssessorPage() {
               Welcome to your Dashboard!
             </h2>
             <p className="md:text-[14px] text-[12px] font-light">
-              Click on any metrics below to get started or update your profile.
+              Click on any of the button below to get started.
             </p>
           </div>
-          <div className="md:basis-[30%] basis-0 md:flex hidden w-full h-full items-center justify-center">
+          <div className="md:basis-[30%] basis-0 md:flex w-full h-full items-center justify-center">
             <button
-              onClick={openModal}
+              // onClick={openModal}
               className="py-[10px] px-[20px] bg-appGreen rounded-[100px] text-white"
             >
-              Invite Member
+              Update Profile
             </button>
           </div>
         </div>
