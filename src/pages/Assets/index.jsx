@@ -146,7 +146,7 @@ export function AssetsPage() {
           >
             <Button
               danger
-              className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-700"
+              className="bg-red-500 text-red ml-1 px-3 py-1 rounded hover:bg-red-700"
             >
               Delete
             </Button>

@@ -223,7 +223,8 @@ export const fetchEquipmentsByInstituteId = async (institutionId, token) => {
       throw new Error(errorData.message || "Failed to fetch room types.");
     }
 
-    const data = await response.json();
+    const result = await response.json();
+    const data = result.equipments;
     console.log();
     // Ensure that data is always an array
     return Array.isArray(data) ? data : [];

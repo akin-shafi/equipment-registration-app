@@ -19,14 +19,14 @@ const SideNav = forwardRef(({ isOpen, onClose, isAssessor }, ref) => {
 
   // Function to determine the active link class
   const getLinkClass = (path) => {
-    return currentPath === path
+    return currentPath.includes(path) // Check if the path is included in currentPath
       ? "w-full h-[40px] rounded-[4px] bg-[#EBF1FD] text-secondary group flex items-center gap-2 pl-4 transition-all duration-500 hover:bg-[#EBF1FD] hover:text-secondary"
       : "w-full h-[40px] rounded-[4px] bg-secondary text-white group flex items-center gap-2 pl-4 transition-all duration-500 hover:bg-[#EBF1FD] hover:text-secondary";
   };
 
   // Function to determine the icon class based on active path
   const getIconClass = (path) => {
-    return currentPath === path
+    return currentPath.includes(path) // Check if the path is included in currentPath
       ? "fill-secondary"
       : "fill-[#fff] group-hover:fill-secondary";
   };
@@ -58,12 +58,9 @@ const SideNav = forwardRef(({ isOpen, onClose, isAssessor }, ref) => {
                 <span className="mt-1">Analytic Dashboard</span>
               </Link>
 
-              <Link
-                to="/assessor/photo"
-                className={getLinkClass("/assessor/photo")}
-              >
-                <AnnouncementIcon className={getIconClass("/assessor/photo")} />
-                <span className="mt-1">Field Photograph</span>
+              <Link to="/assets" className={getLinkClass("/assets")}>
+                <AnnouncementIcon className={getIconClass("/assets")} />
+                <span className="mt-1">Site Photos</span>
               </Link>
 
               {/* <Link
