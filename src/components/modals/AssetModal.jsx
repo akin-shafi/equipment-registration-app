@@ -1,31 +1,48 @@
 /* eslint-disable react/prop-types */
 import { useEffect } from "react";
-import { Modal, Button } from "antd";
+import { Modal, Button, Input, Form } from "antd";
 // import { useNavigate } from "react-router-dom";
 
-const AssetModal = ({ visible, onClose, asset, onEdit, onDelete }) => {
-  //   const navigate = useNavigate();
-  //   console.log("", navigate);
-
-  const handleEdit = () => {
-    onEdit(asset); // Trigger edit action
-  };
-
-  const handleDelete = () => {
-    onDelete(asset.id); // Trigger delete action
-  };
+const AssetModal = ({ visible, onClose, asset, onSave }) => {
+  // State to manage form fields
+  const [form] = Form.useForm();
 
   useEffect(() => {
-    if (!visible) {
-      // Reset modal state when it closes
+    if (visible && asset) {
+      // Set the form values when the modal opens with an asset
+      form.setFieldsValue({
+        caption: asset.caption,
+        description: asset.description,
+        image: asset.image,
+      });
     }
-  }, [visible]);
+  }, [visible, asset, form]);
+
+  const handleSubmit = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        // Call the onSave function to save the edited asset
+        onSave({ ...asset, ...values });
+        onClose(); // Close the modal after saving
+      })
+      .catch((info) => {
+        console.log("Validate Failed:", info);
+      });
+  };
 
   return (
     <Modal
       open={visible}
       onCancel={onClose}
-      footer={null}
+      footer={[
+        <Button key="cancel" onClick={onClose}>
+          Cancel
+        </Button>,
+        <Button key="submit" type="primary" onClick={handleSubmit}>
+          Save
+        </Button>,
+      ]}
       width={600} // Adjust size as needed
     >
       {asset && (
@@ -37,17 +54,51 @@ const AssetModal = ({ visible, onClose, asset, onEdit, onDelete }) => {
           />
           <h3 className="text-xl font-semibold">{asset.caption}</h3>
           <p className="text-gray-500">{asset.description}</p>
-          {/* <Button
-            type="primary"
-            onClick={handleEdit}
-            className="mt-4"
-            style={{ marginRight: "10px" }}
+
+          {/* Asset Edit Form */}
+          <Form
+            form={form}
+            layout="vertical"
+            name="assetForm"
+            initialValues={{
+              caption: asset.caption,
+              description: asset.description,
+              image: asset.image,
+            }}
           >
-            Edit
-          </Button> */}
-          {/* <Button type="danger" onClick={handleDelete} className="mt-4">
-            Delete
-          </Button> */}
+            <Form.Item
+              label="Caption"
+              name="caption"
+              rules={[
+                { required: true, message: "Please enter the asset caption!" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Description"
+              name="description"
+              rules={[
+                { required: true, message: "Please enter a description!" },
+              ]}
+            >
+              <Input.TextArea rows={4} />
+            </Form.Item>
+
+            <Form.Item
+              label="Image URL"
+              name="image"
+              rules={[
+                {
+                  required: true,
+                  message: "Please provide the asset image URL!",
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          </Form>
         </div>
       )}
     </Modal>
