@@ -97,6 +97,27 @@ export const fetchInstitution = async (token) => {
   }
 };
 
+export const fetchInstitutionNames = async (token) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/institutions/names`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to fetch room types.");
+    }
+
+    const data = await response.json();
+    // const data = result.institutions;
+    console.log("fetchInstitution data", data);
+    // Ensure that data is always an array
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    throw new Error(error.message || "Error fetching room types.");
+  }
+};
+
 export const fetchInstitutionById = async (id, token) => {
   try {
     const response = await fetch(`${API_BASE_URL}/institutions/${id}`, {

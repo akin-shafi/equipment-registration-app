@@ -1,48 +1,85 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { Table, Input, Button, Pagination, Tag } from "antd";
+import { Table, Input, Button, Pagination, Tag, Select } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { useSession } from "@/hooks/useSession";
-import { fetchEquipment } from "@/hooks/useAction"; // Make sure this function is correctly defined
+import {
+  fetchEquipmentsByInstituteId,
+  fetchInstitutionNames,
+} from "@/hooks/useAction"; // Ensure these functions are correctly defined
 import { useNavigate } from "react-router-dom";
+
+const { Option } = Select;
 
 export function ListEquipmentPage() {
   const { session } = useSession();
   const token = session?.token;
-  const [equipment, setEquipment] = useState([]); // State to store equipment data
-  const [filteredEquipment, setFilteredEquipment] = useState([]); // State for filtered equipment
+
+  const [institutions, setInstitutions] = useState([]); // State for institution names
+  const [selectedInstitutionId, setSelectedInstitutionId] = useState(null); // Selected institution ID
+  const [equipment, setEquipment] = useState([]); // Equipment data
+  const [filteredEquipment, setFilteredEquipment] = useState([]); // Filtered equipment data
   const [loading, setLoading] = useState(false); // Loading state
   const [searchText, setSearchText] = useState(""); // Search text state
-  const [page, setPage] = useState(1); // Pagination state for current page
-  const [pageSize, setPageSize] = useState(10); // Pagination state for items per page
+  const [page, setPage] = useState(1); // Pagination current page
+  const [pageSize, setPageSize] = useState(10); // Pagination page size
 
   const navigate = useNavigate();
 
-  // Fetch equipment data on mount
+  // Fetch institution names on mount
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchInstitutions = async () => {
+      try {
+        const result = await fetchInstitutionNames(token);
+        setInstitutions(result);
+        if (result.length > 0) {
+          setSelectedInstitutionId(result[0].id); // Default to the first institution ID
+        }
+      } catch (error) {
+        console.error("Failed to fetch institution names:", error);
+      }
+    };
+
+    fetchInstitutions();
+  }, [token]);
+
+  // Fetch equipment by selected institution ID
+  useEffect(() => {
+    const fetchEquipment = async () => {
+      if (!selectedInstitutionId) return;
+
       setLoading(true);
       try {
-        const result = await fetchEquipment(token); // Fetch equipment from the backend
-        setEquipment(result);
-        setFilteredEquipment(result); // Set initial filtered equipment to all
+        const result = await fetchEquipmentsByInstituteId(
+          selectedInstitutionId,
+          token
+        );
+        setEquipment(result || []); // Handle empty results gracefully
+        setFilteredEquipment(result || []); // Initialize filtered data
       } catch (error) {
         console.error("Failed to fetch equipment:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchData();
-  }, [token]);
+
+    fetchEquipment();
+  }, [selectedInstitutionId, token]);
 
   // Handle search input
   const handleSearch = (value) => {
     setSearchText(value);
-    const filtered = equipment.filter(
-      (item) => item.name.toLowerCase().includes(value.toLowerCase()) // Search by name
+    const filtered = equipment.filter((item) =>
+      item.name.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredEquipment(filtered);
-    setPage(1); // Reset to first page when searching
+    setPage(1); // Reset pagination on search
+  };
+
+  // Handle dropdown change for institution
+  const handleInstitutionChange = (value) => {
+    setSelectedInstitutionId(value);
+    setSearchText(""); // Reset search text on institution change
   };
 
   // Handle pagination
@@ -51,29 +88,24 @@ export function ListEquipmentPage() {
     setPageSize(pageSize);
   };
 
-  // Columns for Ant Design Table
+  // Columns for the Ant Design Table
   const columns = [
     {
       title: "S/N",
       dataIndex: "serialNumber",
       key: "serialNumber",
-      render: (_, __, index) => (page - 1) * pageSize + index + 1, // Calculate serial number
+      render: (_, __, index) => (page - 1) * pageSize + index + 1,
     },
     {
       title: "Equipment Name",
       dataIndex: "name",
       key: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name), // Sort by name
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
-      title: "Application ID",
-      dataIndex: "applicationId",
-      key: "applicationId",
-    },
-    {
-      title: "Model Number",
-      dataIndex: "modelNumber",
-      key: "modelNumber",
+      title: "Institution Name",
+      dataIndex: "institutionName",
+      key: "institutionName",
     },
     {
       title: "Department",
@@ -99,7 +131,7 @@ export function ListEquipmentPage() {
       title: "Created At",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (text) => new Date(text).toLocaleDateString(), // Format date
+      render: (text) => new Date(text).toLocaleDateString(),
     },
   ];
 
@@ -111,24 +143,37 @@ export function ListEquipmentPage() {
           <Button
             type="primary"
             className="bg-appGreen hover:bg-appGreenLight"
-            onClick={() => navigate("/equipment")} // Navigate to the add equipment page
-            style={{ marginLeft: "auto" }}
+            onClick={() => navigate("/equipment")}
           >
             Add Equipment
           </Button>
         </div>
-        <Input
-          placeholder="Search by equipment name"
-          value={searchText}
-          onChange={(e) => handleSearch(e.target.value)}
-          prefix={<SearchOutlined />}
-          style={{ width: "250px", marginBottom: "20px" }}
-        />
+        <div className="flex justify-between items-center mb-4">
+          <Input
+            placeholder="Search by equipment name"
+            value={searchText}
+            onChange={(e) => handleSearch(e.target.value)}
+            prefix={<SearchOutlined />}
+            style={{ width: "250px" }}
+          />
+          <Select
+            value={selectedInstitutionId}
+            onChange={handleInstitutionChange}
+            style={{ width: 250 }}
+            placeholder="Select Institution"
+          >
+            {institutions.map((institution) => (
+              <Option key={institution.id} value={institution.id}>
+                {institution.name}
+              </Option>
+            ))}
+          </Select>
+        </div>
         <Table
           columns={columns}
           dataSource={filteredEquipment}
           rowKey="id"
-          pagination={false} // Disable default pagination
+          pagination={false}
           loading={loading}
         />
         <Pagination
