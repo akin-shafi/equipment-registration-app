@@ -128,6 +128,7 @@ export function UserManagementPage() {
         <>
           <Button
             type="link"
+            primary
             onClick={() => {
               setSelectedUser(record);
               setIsModalVisible(true);
@@ -167,7 +168,7 @@ export function UserManagementPage() {
               setIsModalVisible(true);
             }}
           >
-            Add More
+            Invite User
           </Button>
         </div>
         <Input
