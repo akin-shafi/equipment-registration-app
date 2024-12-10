@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { Table, Input, Button, Pagination, Select } from "antd";
+import { Table, Input, Pagination, Select } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { useSession } from "@/hooks/useSession";
 import {
   fetchAssetsByinstitutionId,
   fetchInstitutionNames,
 } from "@/hooks/useAction";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 
@@ -24,7 +24,7 @@ export function ListAssetsPage() {
   const [page, setPage] = useState(1); // Pagination current page
   const [pageSize, setPageSize] = useState(10); // Pagination page size
 
-  const navigate = useNavigate();
+  //   const navigate = useNavigate();
 
   // Fetch institution names on mount
   useEffect(() => {
@@ -135,14 +135,14 @@ export function ListAssetsPage() {
     <DashboardLayout>
       <div className="p-4">
         <div className="flex justify-between mb-10">
-          <h2>List of Assets</h2>
-          <Button
+          <h2>List of Site Photos</h2>
+          {/* <Button
             type="primary"
             className="bg-appGreen hover:bg-appGreenLight"
             onClick={() => navigate("/assets/add")}
           >
             Add Asset
-          </Button>
+          </Button> */}
         </div>
         <div className="flex justify-between items-center mb-4">
           <Input
