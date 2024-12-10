@@ -17,6 +17,7 @@ import { OnboardingPage } from "./pages/Onboarding";
 import { AssetsPage } from "./pages/Assets";
 import AddAssets from "./pages/Assets/AddAssets";
 import { ContactPage } from "./pages/Contact";
+import { ListAssetsPage } from "./pages/Assets/ListAssetsPage";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
           element={<InstitutionManagementPage />}
         />
         <Route path="/all-equipments" element={<ListEquipmentPage />} />
+        <Route path="/all-assets" element={<ListAssetsPage />} />
       </Routes>
     </Router>
   );

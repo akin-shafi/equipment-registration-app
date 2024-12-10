@@ -101,6 +101,11 @@ const SideNav = forwardRef(({ isOpen, onClose, isAssessor }, ref) => {
                 <span className="mt-1">Equipments</span>
               </Link>
 
+              <Link to="/all-assets" className={getLinkClass("/all-assets")}>
+                <CalendarIcon className={getIconClass("/all-assets")} />
+                <span className="mt-1">Site Photos</span>
+              </Link>
+
               {/* Add more admin-specific links here */}
             </>
           )}
