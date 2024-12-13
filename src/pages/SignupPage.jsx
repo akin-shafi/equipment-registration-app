@@ -42,7 +42,7 @@ export function SignupPage() {
     try {
       const response = await registerUser({
         title: values.title,
-        fullName: values.fullName,
+        fullname: values.fullname,
         tags: values.tags,
         email: values.email,
         password: values.password,
@@ -101,7 +101,7 @@ export function SignupPage() {
 
             <Col span={18}>
               <Form.Item
-                name="fullName"
+                name="fullname"
                 label="Full Name"
                 rules={[
                   { required: true, message: "Please enter the full name" },
