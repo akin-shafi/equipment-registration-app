@@ -193,7 +193,7 @@ export function SignupPage() {
         <div className="mt-4 text-center">
           <p>
             Already have an account?{" "}
-            <Link to="/auth/login" className="text-secondary">
+            <Link to="/login" className="text-secondary">
               Login
             </Link>
           </p>

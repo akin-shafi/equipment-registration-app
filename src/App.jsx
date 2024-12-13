@@ -20,6 +20,7 @@ import AddAssets from "./pages/Assets/AddAssets";
 import { ContactPage } from "./pages/Contact";
 import { ListAssetsPage } from "./pages/Assets/ListAssetsPage";
 import AddEquipmentForm from "./pages/Equipment/addEquipmentForm";
+import ForgotPassword from "./pages/auth/forgot-password";
 
 function App() {
   return (
@@ -29,6 +30,8 @@ function App() {
         <Route path="/sign-up" element={<SignupPage />} />
 
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/institution" element={<InstitutionDashboard />} />

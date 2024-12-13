@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSession } from "../hooks/useSession";
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons"; // Import Ant Design icons
 // import Logo from "@/assets/images/logo-dark.png";
@@ -116,6 +116,14 @@ export function LoginPage() {
             {isProcessing ? "Processing" : "Login"}
           </button>
         </form>
+        <div className="text-center mt-4">
+          <Link
+            to="/forgot-password"
+            className="  cursor-pointer transition-all duration-500 text-teal-600 hover:text-secondary text-[12px] md:text-[14px]"
+          >
+            Forgot Password ?
+          </Link>
+        </div>
       </Spin>
     </div>
   );
