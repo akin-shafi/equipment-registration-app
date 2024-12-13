@@ -14,6 +14,7 @@ export function AssessorPage() {
   const tags = session?.user?.tags || [];
   const fullname = session?.user?.fullname;
   const role = session?.user?.role;
+  const applicationNo = session?.user?.applicationNo;
 
   const [institutions, setInstitutions] = useState([]);
   const [filteredInstitutions, setFilteredInstitutions] = useState([]);
@@ -108,7 +109,7 @@ export function AssessorPage() {
               {role}
             </h5>
             <p className="text-[#667085] md:text-[14px] text-[12px] font-normal">
-              Welcome {fullname}
+              Welcome {fullname} - {applicationNo}
             </p>
           </div>
         </div>

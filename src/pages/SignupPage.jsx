@@ -41,15 +41,13 @@ export function SignupPage() {
 
     try {
       const response = await registerUser({
-        fullname: values.fullname,
+        title: values.title,
+        fullName: values.fullName,
         tags: values.tags,
         email: values.email,
         password: values.password,
-        role: "data-entry",
-        createdBy: "user",
       });
-      if (response.statusCode === 200) {
-        setError(response.message);
+      if (response.success) {
         navigate("/login");
       } else {
         setError("Registration failed. Please try again.");
@@ -83,16 +81,36 @@ export function SignupPage() {
           <Row gutter={16}>
             <Col span={24}>
               <Form.Item
-                name="fullname"
+                name="title"
+                label="Title"
+                rules={[{ required: true, message: "Please select your title" }]}
+              >
+                <Select placeholder="Select Title">
+                  <Select.Option value="Mr">Mr</Select.Option>
+                  <Select.Option value="Mrs">Mrs</Select.Option>
+                  <Select.Option value="Ms">Ms</Select.Option>
+                  <Select.Option value="Dr">Dr</Select.Option>
+                  <Select.Option value="Prof">Prof</Select.Option>
+                  <Select.Option value="Engr">Engr</Select.Option>
+                  <Select.Option value="Barr">Barr</Select.Option>
+                </Select>
+              </Form.Item>
+            </Col>
+
+            <Col span={24}>
+              <Form.Item
+                name="fullName"
                 label="Full Name"
-                rules={[
-                  { required: true, message: "Please enter the full name" },
-                ]}
+                rules={[{ required: true, message: "Please enter the full name" }]}
               >
                 <Input placeholder="Enter full name" />
               </Form.Item>
             </Col>
           </Row>
+
+          {/* <Row gutter={16}>
+            
+          </Row> */}
 
           <Row gutter={16}>
             <Col span={24}>
@@ -101,10 +119,7 @@ export function SignupPage() {
                 label="Email"
                 rules={[
                   { required: true, message: "Please enter a valid email" },
-                  {
-                    type: "email",
-                    message: "Please enter a valid email address",
-                  },
+                  { type: "email", message: "Please enter a valid email address" },
                 ]}
               >
                 <Input placeholder="Enter email address" />
@@ -126,9 +141,7 @@ export function SignupPage() {
               <Form.Item
                 name="confirmPassword"
                 label="Confirm Password"
-                rules={[
-                  { required: true, message: "Please confirm your password" },
-                ]}
+                rules={[{ required: true, message: "Please confirm your password" }]}
               >
                 <Input.Password placeholder="Confirm password" />
               </Form.Item>
@@ -137,14 +150,8 @@ export function SignupPage() {
 
           <Form.Item
             name="tags"
-            label="Institution of Assignment"
-            rules={[
-              {
-                required: true,
-                message:
-                  "Please select at least one institution of  assignment",
-              },
-            ]}
+            label="Institution Assigned"
+            rules={[{ required: true, message: "Please select at least one institution assigned" }]}
           >
             <Select
               mode="multiple"
@@ -171,8 +178,8 @@ export function SignupPage() {
 
         <div className="mt-4 text-center">
           <p>
-            Already have an account?{" "}
-            <Link to="/login" className="text-secondary">
+            Already have an account?{' '}
+            <Link to="/auth/login" className="text-secondary">
               Login
             </Link>
           </p>
