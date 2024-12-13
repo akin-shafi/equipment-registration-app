@@ -41,11 +41,12 @@ export function SignupPage() {
 
     try {
       const response = await registerUser({
-        title: values.title,
         fullname: values.fullname,
         tags: values.tags,
         email: values.email,
         password: values.password,
+        role: "data-entry",
+        createdBy: "user",
       });
       if (response.success) {
         navigate("/login");

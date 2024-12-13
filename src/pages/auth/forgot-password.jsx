@@ -97,7 +97,7 @@ const ForgotPassword = () => {
               Login
             </Link>
             <span className="px-2">or</span>
-            <Link to="/signup" className="text-secondary">
+            <Link to="/sign-up" className="text-secondary">
               Register
             </Link>
           </p>
