@@ -93,7 +93,7 @@ const ForgotPassword = () => {
         <div className="mt-4 text-center">
           <p>
             Back to{" "}
-            <Link to="/auth/login" className="text-teal-700">
+            <Link to="/login" className="text-teal-700">
               Login
             </Link>
             <span className="px-2">or</span>

@@ -49,7 +49,7 @@ const ResetPassword = () => {
           "Password has been reset successfully. Redirecting to login page..."
         );
         setTimeout(() => {
-          window.location.href = "/auth/login";
+          window.location.href = "/login";
         }, 5000);
       } else {
         setError("Failed to reset password. Please try again.");
@@ -117,10 +117,7 @@ const ResetPassword = () => {
         <div className="mt-4 text-center">
           <p>
             Remembered your password?{" "}
-            <Link
-              to="/auth/login"
-              className="text-appGreen hover:text-teal-600"
-            >
+            <Link to="/login" className="text-appGreen hover:text-teal-600">
               Login
             </Link>
           </p>
