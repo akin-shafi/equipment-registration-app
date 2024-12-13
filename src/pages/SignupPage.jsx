@@ -41,6 +41,7 @@ export function SignupPage() {
 
     try {
       const response = await registerUser({
+        title: values.title,
         fullname: values.fullname,
         tags: values.tags,
         email: values.email,
