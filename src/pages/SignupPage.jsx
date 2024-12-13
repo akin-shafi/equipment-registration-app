@@ -182,7 +182,7 @@ export function SignupPage() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full p-2 rounded bg-secondary text-white hover:bg-teal-700 transition ${
+            className={`w-full bg-appGreen text-white py-2 rounded-md hover:bg-appGreenLight mt-4 ${
               loading ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
