@@ -49,7 +49,8 @@ export function SignupPage() {
         role: "data-entry",
         createdBy: "user",
       });
-      if (response.success) {
+      if (response.statusCode === 200) {
+        setError(response.message);
         navigate("/login");
       } else {
         setError("Registration failed. Please try again.");
