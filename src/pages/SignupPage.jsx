@@ -66,7 +66,7 @@ export function SignupPage() {
           <WhiteLogo />
           <h1 className="text-1xl font-bold text-appGreen">Baseline Study</h1>
         </div>
-        <div className="mb-4 text-2xl font-bold text-gray-600 text-center">
+        <div className="mb-4 text-1xl font-bold text-gray-600 text-center">
           Create an Account
         </div>
 
@@ -79,11 +79,13 @@ export function SignupPage() {
           initialValues={{ tags: [] }}
         >
           <Row gutter={16}>
-            <Col span={24}>
+            <Col span={6}>
               <Form.Item
                 name="title"
                 label="Title"
-                rules={[{ required: true, message: "Please select your title" }]}
+                rules={[
+                  { required: true, message: "Please select your title" },
+                ]}
               >
                 <Select placeholder="Select Title">
                   <Select.Option value="Mr">Mr</Select.Option>
@@ -97,11 +99,13 @@ export function SignupPage() {
               </Form.Item>
             </Col>
 
-            <Col span={24}>
+            <Col span={18}>
               <Form.Item
                 name="fullName"
                 label="Full Name"
-                rules={[{ required: true, message: "Please enter the full name" }]}
+                rules={[
+                  { required: true, message: "Please enter the full name" },
+                ]}
               >
                 <Input placeholder="Enter full name" />
               </Form.Item>
@@ -119,7 +123,10 @@ export function SignupPage() {
                 label="Email"
                 rules={[
                   { required: true, message: "Please enter a valid email" },
-                  { type: "email", message: "Please enter a valid email address" },
+                  {
+                    type: "email",
+                    message: "Please enter a valid email address",
+                  },
                 ]}
               >
                 <Input placeholder="Enter email address" />
@@ -141,7 +148,9 @@ export function SignupPage() {
               <Form.Item
                 name="confirmPassword"
                 label="Confirm Password"
-                rules={[{ required: true, message: "Please confirm your password" }]}
+                rules={[
+                  { required: true, message: "Please confirm your password" },
+                ]}
               >
                 <Input.Password placeholder="Confirm password" />
               </Form.Item>
@@ -151,7 +160,12 @@ export function SignupPage() {
           <Form.Item
             name="tags"
             label="Institution Assigned"
-            rules={[{ required: true, message: "Please select at least one institution assigned" }]}
+            rules={[
+              {
+                required: true,
+                message: "Please select at least one institution assigned",
+              },
+            ]}
           >
             <Select
               mode="multiple"
@@ -172,13 +186,13 @@ export function SignupPage() {
               loading ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
-            {loading ? "Processing..." : "Create an Account"}
+            {loading ? "Processing..." : "Create Account"}
           </button>
         </Form>
 
         <div className="mt-4 text-center">
           <p>
-            Already have an account?{' '}
+            Already have an account?{" "}
             <Link to="/auth/login" className="text-secondary">
               Login
             </Link>
