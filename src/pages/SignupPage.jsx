@@ -19,7 +19,7 @@ export function SignupPage() {
         const institutionsData = await fetchInstitution();
         const institutionOptions = institutionsData.map((institution) => ({
           value: institution.id,
-          label: `${institution.name} (${institution.initial})`,
+          label: ` (${institution.initial}- ${institution.city} - ${institution.state})`,
         }));
         setInstitutions(institutionOptions);
       } catch (err) {
@@ -61,7 +61,7 @@ export function SignupPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-primary text-white p-4">
-      <div className="bg-white text-black rounded-lg shadow-lg p-8 max-w-md w-full">
+      <div className="bg-white text-black rounded-lg shadow-lg p-8 max-w-lg w-full">
         <div className="text-center mb-6">
           <WhiteLogo />
           <h1 className="text-1xl font-bold text-appGreen">Baseline Study</h1>
