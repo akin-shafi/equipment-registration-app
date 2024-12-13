@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { LoginPage } from "./pages/LoginPage";
+import { SignupPage } from "./pages/SignupPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { InstitutionDashboard } from "./pages/InstitutionDashboard";
 import { AdminPage } from "./pages/Admin";
@@ -18,12 +19,15 @@ import { AssetsPage } from "./pages/Assets";
 import AddAssets from "./pages/Assets/AddAssets";
 import { ContactPage } from "./pages/Contact";
 import { ListAssetsPage } from "./pages/Assets/ListAssetsPage";
+import AddEquipmentForm from "./pages/Equipment/addEquipmentForm";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage />} />
+        <Route path="/sign-up" element={<SignupPage />} />
+
         <Route path="/login" element={<LoginPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
@@ -38,6 +42,8 @@ function App() {
         <Route path="/assets/:id" element={<AssetsPage />} />
         <Route path="/list-equipments/:id" element={<ListEquipments />} />
         <Route path="/add-assets/:id" element={<AddAssets />} />
+        <Route path="/add-equipment-sheet/:id" element={<AddEquipmentForm />} />
+
         <Route path="/contact/:id" element={<ContactPage />} />
 
         <Route path="*" element={<AssessorPage />} />

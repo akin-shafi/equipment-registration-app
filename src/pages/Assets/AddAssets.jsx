@@ -20,7 +20,7 @@ const AddAssets = () => {
   const { session } = useSession();
   const token = session?.token;
   const { id } = useParams(); // Get the institution ID from the URL
-  const [row, setRow] = useState(initialRow);
+  const [rows, setRows] = useState([initialRow]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [institution, setInstitution] = useState(null);
@@ -53,48 +53,62 @@ const AddAssets = () => {
   const renderError = () =>
     error && <p className="text-red-500 text-center mb-4">{error}</p>;
 
+  const handleAddRow = () => {
+    setRows([...rows, initialRow]);
+  };
+
+  const handleDeleteRow = (index) => {
+    const updatedRows = rows.filter((_, idx) => idx !== index);
+    setRows(updatedRows);
+  };
+
+  const handleInputChange = (index, field, value) => {
+    const updatedRows = [...rows];
+    updatedRows[index][field] = value;
+    setRows(updatedRows);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
-    // Ensure row.image is a File object (not a blob URL)
-    if (!(row.image instanceof File)) {
-      setError("Please select a valid image file.");
-      setIsLoading(false);
-      return;
-    }
-
-    // Check the file type (only allow images)
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
-    if (!allowedTypes.includes(row.image.type)) {
-      setError("Invalid image format. Only JPEG, PNG, and GIF are allowed.");
-      setIsLoading(false);
-      return;
-    }
-
-    // Create FormData object to send data as multi-part form data
-    const formData = new FormData();
-
-    // Append data to the FormData object
-    formData.append("image", row.image); // Send the actual File object
-    formData.append("caption", row.caption);
-    formData.append("description", row.description);
-    formData.append("institutionId", id);
-    formData.append("createdBy", session?.user?.applicationNo); // Assuming `createdBy` is the user ID from session
-
     try {
-      const response = await fetch(`${API_BASE_URL}/assets`, {
-        method: "POST",
-        body: formData, // Send the formData as the body
-      });
+      for (const row of rows) {
+        if (!(row.image instanceof File)) {
+          setError("Please select a valid image file for all rows.");
+          setIsLoading(false);
+          return;
+        }
 
-      if (!response.ok) {
-        throw new Error("Failed to submit asset");
+        const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+        if (!allowedTypes.includes(row.image.type)) {
+          setError(
+            "Invalid image format. Only JPEG, PNG, and GIF are allowed."
+          );
+          setIsLoading(false);
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("image", row.image);
+        formData.append("caption", row.caption);
+        formData.append("description", row.description);
+        formData.append("institutionId", id);
+        formData.append("createdBy", session?.user?.applicationNo);
+
+        const response = await fetch(`${API_BASE_URL}/assets`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to submit asset");
+        }
       }
 
-      alert("Asset added successfully!");
-      setRow(initialRow); // Reset the form after successful submission
+      alert("Assets added successfully!");
+      setRows([initialRow]); // Reset the form after successful submission
     } catch (err) {
       setError(err.message);
     } finally {
@@ -116,111 +130,129 @@ const AddAssets = () => {
             </div>
           </div>
 
-          <h5 className="md:text-[14px] text-[18px] text-black font-medium text-uupercase mb-4 mt-4">
+          <h5 className="md:text-[14px] text-[18px] text-black font-medium text-uppercase mb-4 mt-4">
             {institution ? institution.name : "Loading..."}
             <hr />
           </h5>
 
           {renderError()}
 
-          {/* Image Upload */}
-          <div className="w-full flex flex-col">
-            <label className="block text-sm font-medium text-gray-700">
-              Image <sup className="text-red-500">*</sup>
-            </label>
-
-            <div className="flex items-center space-x-4">
-              {/* Avatar Image */}
-              <div className="relative">
-                <img
-                  src={
-                    row.image instanceof File
-                      ? URL.createObjectURL(row.image)
-                      : cameraImage
-                  }
-                  alt="Asset Avatar"
-                  className="w-16 h-16 object-cover"
-                />
-                {row.image && (
-                  <RiDeleteBin5Line
-                    className="absolute top-0 right-0 cursor-pointer text-red-500"
-                    onClick={() => {
-                      setRow({ ...row, image: "" });
+          {rows.map((row, index) => (
+            <div key={index} className="space-y-4 border-b pb-4 mb-4 grid grid-cols-4 gap-2">
+              <div className="w-full flex flex-col">
+                <label className="block text-sm font-medium text-gray-700">
+                  Image <sup className="text-red-500">*</sup>
+                </label>
+                <div className="flex items-center space-x-4">
+                  <div className="relative">
+                    <img
+                      src={
+                        row.image instanceof File
+                          ? URL.createObjectURL(row.image)
+                          : cameraImage
+                      }
+                      alt="Asset Avatar"
+                      className="w-16 h-16 object-cover"
+                    />
+                    {row.image && (
+                      <RiDeleteBin5Line
+                        className="absolute top-0 right-0 cursor-pointer text-red-500"
+                        onClick={() => handleInputChange(index, "image", "")}
+                      />
+                    )}
+                  </div>
+                  <label
+                    htmlFor={`image-upload-${index}`}
+                    className="cursor-pointer text-blue-500 hover:text-blue-700"
+                  >
+                    {row.image ? "Change Image" : "Upload Image"}
+                  </label>
+                  <input
+                    id={`image-upload-${index}`}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        handleInputChange(index, "image", file);
+                      }
                     }}
                   />
-                )}
+                </div>
               </div>
 
-              {/* Upload Button */}
-              <label
-                htmlFor="image-upload"
-                className="cursor-pointer text-blue-500 hover:text-blue-700"
-              >
-                {row.image ? "Change Image" : "Upload Image"}
-              </label>
-              <input
-                id="image-upload"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    setRow({ ...row, image: file }); // Store the actual File object
+              <div className="w-full flex flex-col">
+                <label className="block text-sm font-medium text-gray-700">
+                  Caption <sup className="text-red-500">*</sup>
+                </label>
+                <Select
+                  value={row.caption}
+                  onChange={(value) =>
+                    handleInputChange(index, "caption", value)
                   }
-                }}
-              />
-            </div>
-          </div>
+                  style={{ width: "100%" }}
+                  showSearch
+                  allowClear
+                  filterOption={(input, option) =>
+                    option?.children.toLowerCase().includes(input.toLowerCase())
+                  }
+                >
+                  {captions.map((caption, idx) => (
+                    <Select.Option key={idx} value={caption}>
+                      {caption}
+                    </Select.Option>
+                  ))}
+                  <Select.Option value="other">
+                    <Input
+                      placeholder="Enter custom caption"
+                      onBlur={(e) =>
+                        handleInputChange(index, "caption", e.target.value)
+                      }
+                    />
+                  </Select.Option>
+                </Select>
+              </div>
 
-          {/* Caption - Searchable Dropdown */}
-          <div className="w-full flex flex-col">
-            <label className="block text-sm font-medium text-gray-700">
-              Caption <sup className="text-red-500">*</sup>
-            </label>
-            <Select
-              value={row.caption}
-              onChange={(value) => setRow({ ...row, caption: value })}
-              style={{ width: "100%" }}
-              showSearch
-              allowClear
-              filterOption={(input, option) =>
-                option?.children.toLowerCase().includes(input.toLowerCase())
-              }
-            >
-              {captions.map((caption, idx) => (
-                <Select.Option key={idx} value={caption}>
-                  {caption}
-                </Select.Option>
-              ))}
-              <Select.Option value="other">
-                <Input
-                  placeholder="Enter custom caption"
-                  onBlur={(e) => setRow({ ...row, caption: e.target.value })}
+              <div className="w-full flex flex-col">
+                <label className="block text-sm font-medium text-gray-700">
+                  Description <sup className="text-red-500">*</sup>
+                </label>
+                <Input.TextArea
+                  value={row.description}
+                  onChange={(e) =>
+                    handleInputChange(index, "description", e.target.value)
+                  }
+                  rows={3}
+                  placeholder="Enter asset description"
                 />
-              </Select.Option>
-            </Select>
-          </div>
+              </div>
 
-          {/* Description */}
-          <div className="w-full flex flex-col">
-            <label className="block text-sm font-medium text-gray-700">
-              Description <sup className="text-red-500">*</sup>
-            </label>
-            <Input.TextArea
-              value={row.description}
-              onChange={(e) => setRow({ ...row, description: e.target.value })}
-              rows={3}
-              placeholder="Enter asset description"
-            />
-          </div>
+              {rows.length > 1 && (
+                <button
+                  type="button"
+                  className="text-red-500 hover:text-red-700"
+                  onClick={() => handleDeleteRow(index)}
+                >
+                  Delete Row
+                </button>
+              )}
+            </div>
+          ))}
 
-          <div className="mt-4">
+          <div className="mt-4 space-y-4">
+            <button
+              type="button"
+              onClick={handleAddRow}
+              className="w-full py-2 bg-gray-200 hover:bg-gray-300 rounded-full text-black"
+            >
+              Add Row
+            </button>
             <button
               onClick={handleSubmit}
-              className="w-full py-2 bg-appGreen hover:bg-appGreenLight rounded-full text-white rounded"
+              className="w-full py-2 bg-appGreen hover:bg-appGreenLight rounded-full text-white"
             >
-              Submit Asset
+              Submit Assets
             </button>
           </div>
         </div>

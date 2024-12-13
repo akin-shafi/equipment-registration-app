@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
 import { Modal, Form, Input, Select, Button, Row, Col } from "antd";
-import { fetchRoles, fetchInstitution } from "@/hooks/useAction"; // Import fetchRoles and fetchInstitution
+import { fetchRoles, fetchInstitution } from "@/hooks/useAction";
 
 export function UserModal({
   visible,
@@ -10,35 +10,39 @@ export function UserModal({
   onSubmit,
   user = null,
   showCloseIcon = true,
-  tagsOptions = [], // Old tagsOptions prop, will be replaced with fetched institutions
 }) {
   const [form] = Form.useForm();
   const isEdit = Boolean(user);
-  const [roles, setRoles] = useState([]); // State to hold fetched roles
-  const [institutions, setInstitutions] = useState([]); // State to hold fetched institutions
+  const [roles, setRoles] = useState([]);
+  const [institutions, setInstitutions] = useState([]);
 
-  // Fetch roles when the modal is visible
   useEffect(() => {
     if (visible) {
-      // Fetch roles only when the modal is visible
       const getRoles = async () => {
         try {
-          const rolesData = await fetchRoles(); // Fetch roles from API
-          setRoles(rolesData); // Set the roles to the state
+          const rolesData = await fetchRoles();
+          setRoles(rolesData);
         } catch (error) {
           console.error("Failed to fetch roles", error);
         }
       };
 
-      // Fetch institutions only when the modal is visible
       const getInstitutions = async () => {
         try {
-          const institutionsData = await fetchInstitution(); // Fetch institutions from API
+          const institutionsData = await fetchInstitution();
           const institutionOptions = institutionsData.map((institution) => ({
             value: institution.id,
-            label: `${institution.name} (${institution.initial})`, // Format name and initial
+            label: `${institution.name} (${institution.initial})`,
           }));
-          setInstitutions(institutionOptions); // Set the institutions to the state
+          setInstitutions(institutionOptions);
+
+          // Pre-populate tags for edit mode
+          if (isEdit && user?.tags) {
+            const existingTags = user.tags.map((tagId) => tagId);
+            form.setFieldsValue({ ...user, tags: existingTags });
+          } else {
+            form.resetFields();
+          }
         } catch (error) {
           console.error("Failed to fetch institutions", error);
         }
@@ -46,18 +50,18 @@ export function UserModal({
 
       getRoles();
       getInstitutions();
-      isEdit ? form.setFieldsValue(user) : form.resetFields();
     }
   }, [form, isEdit, user, visible]);
 
   const handleFinish = (values) => {
     const payload = {
       ...values,
-      createdBy: "admin", // Automatically set createdBy
-      role: values.role || "admin", // Set role to the selected value
+      tags: values.tags.map((tag) => tag), // Ensure tags are IDs
+      createdBy: "admin",
+      role: values.role || "admin",
     };
     onSubmit(payload);
-    form.resetFields(); // Clear form after submission
+    form.resetFields();
   };
 
   return (
@@ -65,22 +69,24 @@ export function UserModal({
       open={visible}
       title={isEdit ? "Edit Member" : "Create New Member"}
       onCancel={onClose}
-      footer={[
-        showCloseIcon && (
-          <Button key="cancel" className="rounded-full" onClick={onClose}>
-            Cancel
+      footer={
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          {showCloseIcon && (
+            <Button key="cancel" className="rounded-full" onClick={onClose}>
+              Cancel
+            </Button>
+          )}
+          <Button
+            key="submit"
+            type="primary"
+            className="bg-appGreen hover:bg-appGreenLight rounded-full"
+            onClick={() => form.submit()}
+          >
+            {isEdit ? "Save Changes" : "Submit"}
           </Button>
-        ),
-        <Button
-          key="submit"
-          type="primary"
-          className="bg-appGreen hover:bg-appGreenLight rounded-full w-full"
-          onClick={() => form.submit()}
-        >
-          {isEdit ? "Save Changes" : "Submit"}
-        </Button>,
-      ]}
-      closeIcon={showCloseIcon ? undefined : null} // Hide close icon based on showCloseIcon state
+        </div>
+      }
+      closeIcon={showCloseIcon ? undefined : null}
     >
       <Form
         form={form}
@@ -150,11 +156,11 @@ export function UserModal({
             mode="multiple"
             placeholder="Select tags"
             allowClear
-            showSearch // Enable search functionality
+            showSearch
             filterOption={(input, option) =>
               option?.label.toLowerCase().includes(input.toLowerCase())
-            } // Custom filter function for search
-            options={institutions} // Use institutions as tag options
+            }
+            options={institutions}
           />
         </Form.Item>
       </Form>

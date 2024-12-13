@@ -33,20 +33,21 @@ export function LoginPage() {
 
     setIsProcessing(false); // Set processing to false when login is done
 
-    if (result) {
+    if (result.success === true) {
       const { data } = result; // Assuming `login` returns an object with the role
       const role = data.role;
       if (role === "admin") {
         navigate("/admin");
       } else if (role === "institution") {
         navigate("/institution");
-      } else if (role === "assessor") {
+      } else if (role === "assessor" || role === "data-entry") {
         navigate("/assessor");
       } else {
         navigate("/dashboard"); // Default fallback in case no specific role is found
       }
     } else {
-      setMessage("Invalid credentials. Please try again.");
+      console.log("return", result.message);
+      setMessage(result.message);
     }
   };
 
@@ -59,13 +60,6 @@ export function LoginPage() {
         >
           {/* Logo Section */}
           <div className="text-center mb-6">
-            {/* <img
-              src={Logo}
-              className="mx-auto"
-              alt="logo"
-              width={100}
-              height={100}
-            /> */}
             <WhiteLogo />
             <h1 className="text-1xl font-bold text-appGreen">Baseline Study</h1>
           </div>

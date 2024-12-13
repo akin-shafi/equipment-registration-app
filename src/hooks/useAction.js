@@ -89,7 +89,7 @@ export const fetchInstitution = async (token) => {
 
     const result = await response.json();
     const data = result.institutions;
-    console.log("fetchInstitution data", data);
+    console.log("fetch All Institution data", data);
     // Ensure that data is always an array
     return Array.isArray(data) ? data : [];
   } catch (error) {
@@ -110,7 +110,7 @@ export const fetchInstitutionNames = async (token) => {
 
     const data = await response.json();
     // const data = result.institutions;
-    console.log("fetchInstitution data", data);
+    // console.log("fetchInstitution Name", data);
     // Ensure that data is always an array
     return Array.isArray(data) ? data : [];
   } catch (error) {
@@ -358,7 +358,7 @@ export const fetchAssetsByinstitutionId = async (institutionId, token) => {
 
     const data = await response.json();
     // const data = result.institutions;
-    console.log("fetchInstitution data", data);
+    console.log("fetchInstitution data by Id", data);
     // Ensure that data is always an array
     return Array.isArray(data) ? data : [];
   } catch (error) {

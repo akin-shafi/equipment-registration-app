@@ -108,17 +108,18 @@ export function InstitutionManagementPage() {
       dataIndex: "name",
       key: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
+      render: (_, record) => `${record.name}, ${record.initial}`,
     },
+
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
+      title: "Contact",
+      key: "contact",
+      render: (text, record) => {
+        const { email, phone } = record;
+        return `${email}, ${phone}`;
+      },
     },
-    {
-      title: "Phone",
-      dataIndex: "phone",
-      key: "phone",
-    },
+
     {
       title: "Location",
       key: "location",
