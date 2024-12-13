@@ -13,6 +13,7 @@ export function AssessorPage() {
   const token = session?.token;
   const tags = session?.user?.tags || [];
   const fullname = session?.user?.fullname;
+  const role = session?.user?.role;
 
   const [institutions, setInstitutions] = useState([]);
   const [filteredInstitutions, setFilteredInstitutions] = useState([]);
@@ -103,8 +104,8 @@ export function AssessorPage() {
         {/* Header Section */}
         <div className="w-full h-[8%] flex justify-between md:gap-0 gap-4 mt-1">
           <div>
-            <h5 className="md:text-[20px] text-[16px] font-medium text-black">
-              Institution
+            <h5 className="md:text-[20px] text-[16px] font-medium text-black capitalize">
+              {role}
             </h5>
             <p className="text-[#667085] md:text-[14px] text-[12px] font-normal">
               Welcome {fullname}

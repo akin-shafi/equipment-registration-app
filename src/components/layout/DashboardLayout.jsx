@@ -9,7 +9,9 @@ const DashboardLayout = ({ children }) => {
   const { session } = useSession(); // Auth state: { user, token }
   const navigate = useNavigate(); // For programmatic navigation
   const userRole = session?.user?.role;
-  const isAssessor = userRole === "assessor";
+  // const isAssessor = userRole === "assessor";
+  const isAssessorOrDataEntry = userRole === "assessor" || userRole === "data-entry";
+
 
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
   const sideNavRef = useRef(null);
@@ -56,7 +58,7 @@ const DashboardLayout = ({ children }) => {
           isOpen={isSideNavOpen}
           onClose={toggleSideNav}
           ref={sideNavRef}
-          isAssessor={isAssessor}
+          isAssessor={isAssessorOrDataEntry}
         />
         {/* Page Content */}
         <div className="flex-1 bg-white w-full h-[92vh] mt-[9vh] overflow-y-auto scroller">
