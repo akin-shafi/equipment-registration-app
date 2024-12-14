@@ -54,7 +54,7 @@ export function SignupPage() {
         setError(response.message);
         navigate("/login");
       } else {
-        setError("Registration failed. Please try again.");
+        setError(response.message);
       }
     } catch (err) {
       setError(`An error occurred while registering: ${err.message}`);
