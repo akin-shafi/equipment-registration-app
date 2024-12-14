@@ -45,6 +45,7 @@ export function SignupPage() {
         fullname: values.fullname,
         tags: values.tags,
         email: values.email,
+        phoneNumber: values.phoneNumber,
         password: values.password,
         role: "data-entry",
         createdBy: "user",
@@ -120,7 +121,7 @@ export function SignupPage() {
           </Row> */}
 
           <Row gutter={16}>
-            <Col span={24}>
+            <Col span={12}>
               <Form.Item
                 name="email"
                 label="Email"
@@ -133,6 +134,21 @@ export function SignupPage() {
                 ]}
               >
                 <Input placeholder="Enter email address" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="phoneNumber"
+                label="Phone Number"
+                rules={[
+                  { required: true, message: "Please enter your phone number" },
+                  {
+                    type: "text",
+                    message: "Please enter your phone number",
+                  },
+                ]}
+              >
+                <Input placeholder="Enter phone number" />
               </Form.Item>
             </Col>
           </Row>
