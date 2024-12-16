@@ -116,6 +116,19 @@ const AddAssets = () => {
     }
   };
 
+  const handleSearch = (input) => {
+    if (!input) {
+      setCaptions([
+        "Main Gate",
+        "Group Photo",
+        "Meeting Session",
+        "Administrative Building",
+      ]);
+    } else if (!captions.includes(input)) {
+      setCaptions([...captions, input]);
+    }
+  };
+
   return (
     <DashboardLayout>
       <Spin spinning={isLoading}>
@@ -138,7 +151,10 @@ const AddAssets = () => {
           {renderError()}
 
           {rows.map((row, index) => (
-            <div key={index} className="space-y-4 border-b pb-4 mb-4 grid grid-cols-4 gap-2">
+            <div
+              key={index}
+              className="space-y-4 border-b pb-4 mb-4 grid grid-cols-4 gap-2"
+            >
               <div className="w-full flex flex-col">
                 <label className="block text-sm font-medium text-gray-700">
                   Image <sup className="text-red-500">*</sup>
@@ -194,8 +210,10 @@ const AddAssets = () => {
                   style={{ width: "100%" }}
                   showSearch
                   allowClear
+                  onSearch={handleSearch}
                   filterOption={(input, option) =>
-                    option?.children.toLowerCase().includes(input.toLowerCase())
+                    typeof option?.children === "string" &&
+                    option.children.toLowerCase().includes(input.toLowerCase())
                   }
                 >
                   {captions.map((caption, idx) => (
@@ -203,14 +221,11 @@ const AddAssets = () => {
                       {caption}
                     </Select.Option>
                   ))}
-                  <Select.Option value="other">
-                    <Input
-                      placeholder="Enter custom caption"
-                      onBlur={(e) =>
-                        handleInputChange(index, "caption", e.target.value)
-                      }
-                    />
-                  </Select.Option>
+                  {captions.includes(row.caption) || (
+                    <Select.Option key="custom" value={row.caption}>
+                      {row.caption}
+                    </Select.Option>
+                  )}
                 </Select>
               </div>
 
@@ -240,7 +255,7 @@ const AddAssets = () => {
             </div>
           ))}
 
-          <div className="mt-4 space-y-4">
+          <div className="mt-4 space-y-4 grid grid-cols-2 gap-4 border">
             <button
               type="button"
               onClick={handleAddRow}
