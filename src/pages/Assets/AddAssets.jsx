@@ -158,7 +158,7 @@ const AddAssets = () => {
           {rows.map((row, index) => (
             <div
               key={index}
-              className="space-y-4 border-b pb-4 mb-4 grid grid-cols-4 gap-2"
+              className="space-y-4 border-b pb-4 mb-4 grid grid-cols-3 gap-2"
             >
               <div className="w-full flex flex-col">
                 <label className="block text-sm font-medium text-gray-700">
