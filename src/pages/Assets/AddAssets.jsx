@@ -81,10 +81,15 @@ const AddAssets = () => {
           return;
         }
 
-        const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+        const allowedTypes = [
+          "image/jpg",
+          "image/jpeg",
+          "image/png",
+          "image/gif",
+        ];
         if (!allowedTypes.includes(row.image.type)) {
           setError(
-            "Invalid image format. Only JPEG, PNG, and GIF are allowed."
+            "Invalid image format. Only JPG, JPEG, PNG, and GIF are allowed."
           );
           setIsLoading(false);
           return;
