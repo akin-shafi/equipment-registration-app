@@ -116,11 +116,7 @@ export function AssetsPage() {
         </span>
       ),
     },
-    {
-      title: "Institution ID",
-      dataIndex: "institutionId",
-      key: "institutionId",
-    },
+
     {
       title: "Actions",
       key: "actions",

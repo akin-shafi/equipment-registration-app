@@ -255,7 +255,7 @@ const AddAssets = () => {
             </div>
           ))}
 
-          <div className="mt-4 space-y-4 grid grid-cols-2 gap-4 border">
+          <div className="mt-4  grid grid-cols-2 gap-4 ">
             <button
               type="button"
               onClick={handleAddRow}
