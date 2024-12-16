@@ -83,13 +83,14 @@ const AddAssets = () => {
 
         const allowedTypes = [
           "image/jpg",
+          "image/heic",
           "image/jpeg",
           "image/png",
           "image/gif",
         ];
         if (!allowedTypes.includes(row.image.type)) {
           setError(
-            "Invalid image format. Only JPG, JPEG, PNG, and GIF are allowed."
+            "Invalid image format. Only JPG, JPEG, PNG, HEIC, and GIF are allowed."
           );
           setIsLoading(false);
           return;
@@ -158,7 +159,7 @@ const AddAssets = () => {
           {rows.map((row, index) => (
             <div
               key={index}
-              className="space-y-4 border-b pb-4 mb-4 grid grid-cols-3 gap-2"
+              className="space-y-4 border-b pb-4 mb-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2"
             >
               <div className="w-full flex flex-col">
                 <label className="block text-sm font-medium text-gray-700">
