@@ -107,14 +107,6 @@ export function AssetsPage() {
       title: "Image",
       dataIndex: "image",
       key: "image",
-      // render: (image) => (
-      //   <img
-      //     src={image}
-      //     alt="Asset"
-      //     className="w-16 h-16 object-cover rounded-md"
-      //     onClick={() => handleView(image)} // Show full image on click
-      //   />
-      // ),
       render: (image, record) => (
         <img
           src={image}
@@ -125,20 +117,23 @@ export function AssetsPage() {
       ),
     },
     {
-      title: "Caption",
-      dataIndex: "caption",
-      key: "caption",
-    },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-      render: (text) => (
-        <span title={text}>
-          {text.length > 40 ? `${text.slice(0, 40)}...` : text}
-        </span>
+      title: "Caption & Description",
+      key: "captionDescription",
+      render: (_, record) => (
+        <div>
+          <div>
+            <strong>Caption:</strong> {record.caption}
+          </div>
+          <div>
+            <strong>Description:</strong>{" "}
+            {record.description.length > 40
+              ? `${record.description.slice(0, 40)}...`
+              : record.description}
+          </div>
+        </div>
       ),
     },
+
     {
       title: "Actions",
       key: "actions",
