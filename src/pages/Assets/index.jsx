@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { useSession } from "@/hooks/useSession";
 import DashboardLayout from "@/components/layout/DashboardLayout";
@@ -10,6 +11,7 @@ import {
   updateAsset,
 } from "@/hooks/useAction";
 import AssetModal from "@/components/modals/AssetModal"; // Import the modal component
+import ViewAssetModal from "@/components/modals/ViewAssetModal"; // Import the view image modal component
 
 export function AssetsPage() {
   const { session } = useSession();
@@ -20,7 +22,9 @@ export function AssetsPage() {
   const [filteredAssets, setFilteredAssets] = useState([]); // To filter the assets
   const [loading, setLoading] = useState(false); // For loading state
   const [modalVisible, setModalVisible] = useState(false); // For modal visibility
+  const [imageModalVisible, setImageModalVisible] = useState(false); // For image modal visibility
   const [selectedAsset, setSelectedAsset] = useState(null); // For editing asset
+  const [viewImage, setViewImage] = useState(""); // For viewing image
   const navigate = useNavigate();
 
   // Add new asset handler
@@ -28,10 +32,10 @@ export function AssetsPage() {
     navigate(`/add-assets/${id}`);
   };
 
-  // View asset handler
-  const handleView = (asset) => {
-    setSelectedAsset(asset); // Set selected asset data
-    setModalVisible(true); // Show modal
+  // View asset image handler
+  const handleView = (image) => {
+    setViewImage(image); // Set selected image data
+    setImageModalVisible(true); // Show image modal
   };
 
   // Edit asset handler
@@ -44,11 +48,15 @@ export function AssetsPage() {
   const handleDelete = async (assetId) => {
     setLoading(true);
     try {
-      await deleteAssetById(assetId); // Assuming `deleteAssetById` is a function to delete asset
+      await deleteAssetById(assetId); // Delete the asset
       message.success("Asset deleted successfully");
-      // Refresh the asset list after deletion
-      setAssets(assets.filter((asset) => asset.id !== assetId));
-      setFilteredAssets(filteredAssets.filter((asset) => asset.id !== assetId));
+      // Remove deleted asset from lists
+      setAssets((prevAssets) =>
+        prevAssets.filter((asset) => asset.id !== assetId)
+      );
+      setFilteredAssets((prevFiltered) =>
+        prevFiltered.filter((asset) => asset.id !== assetId)
+      );
     } catch (error) {
       console.error("Failed to delete asset:", error);
       message.error("Failed to delete asset");
@@ -59,8 +67,14 @@ export function AssetsPage() {
 
   // Close modal handler
   const handleModalClose = () => {
-    setModalVisible(false); // Close modal
-    setSelectedAsset(null); // Reset selected asset
+    setModalVisible(false);
+    setSelectedAsset(null);
+  };
+
+  // Close image modal handler
+  const handleImageModalClose = () => {
+    setImageModalVisible(false);
+    setViewImage("");
   };
 
   // Fetch asset data
@@ -74,8 +88,8 @@ export function AssetsPage() {
       setLoading(true);
       try {
         const result = await fetchAssetsByinstitutionId(id, token);
-        setAssets(result); // Set assets data
-        setFilteredAssets(result); // Set filtered assets to all assets initially
+        setAssets(result);
+        setFilteredAssets(result);
       } catch (error) {
         console.error("Failed to fetch assets:", error);
         message.error("Failed to load assets");
@@ -93,11 +107,20 @@ export function AssetsPage() {
       title: "Image",
       dataIndex: "image",
       key: "image",
-      render: (image) => (
+      // render: (image) => (
+      //   <img
+      //     src={image}
+      //     alt="Asset"
+      //     className="w-16 h-16 object-cover rounded-md"
+      //     onClick={() => handleView(image)} // Show full image on click
+      //   />
+      // ),
+      render: (image, record) => (
         <img
           src={image}
           alt="Asset"
-          className="w-16 h-16 object-cover rounded-md"
+          className="w-16 h-16 object-cover rounded-md cursor-pointer"
+          onClick={() => handleView(record)} // Trigger modal on image click
         />
       ),
     },
@@ -116,27 +139,20 @@ export function AssetsPage() {
         </span>
       ),
     },
-
     {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
         <div>
           <Button
-            onClick={() => handleView(record)} // Pass the entire record to handleView
-            className="bg-appGreen text-white px-3 py-1 rounded hover:bg-gold"
-          >
-            View
-          </Button>
-          <Button
-            onClick={() => handleEdit(record)} // Pass the entire record to handleEdit
+            onClick={() => handleEdit(record)}
             className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700"
           >
             Edit
           </Button>
           <Popconfirm
             title="Are you sure to delete this asset?"
-            onConfirm={() => handleDelete(record.id)} // Pass the ID to handleDelete
+            onConfirm={() => handleDelete(record.id)}
             okText="Yes"
             cancelText="No"
           >
@@ -171,7 +187,7 @@ export function AssetsPage() {
             <div className="md:basis-[50%] basis-full text-secondary h-full flex flex-col justify-center gap-2">
               <h6 className="text-[10px] font-bold">OVERVIEW</h6>
               <p className="md:text-[14px] text-[12px] font-light">
-                View all site Photo associated with this institution.
+                View all site photos associated with this institution.
               </p>
             </div>
             <div className="md:basis-[30%] basis-0 md:flex w-full h-full items-center justify-center">
@@ -199,7 +215,6 @@ export function AssetsPage() {
         </div>
       </div>
 
-      {/* Pass the selectedAsset and other handlers to AssetModal */}
       <AssetModal
         visible={modalVisible}
         onClose={handleModalClose}
@@ -207,39 +222,33 @@ export function AssetsPage() {
           setLoading(true);
           try {
             if (selectedAsset) {
-              // Update existing asset
               const updatedAsset = await updateAsset(
                 selectedAsset.id,
                 data,
                 token
               );
               message.success("Asset updated successfully");
-
-              // Update the asset list with the edited asset
-              setAssets((prevAssets) =>
-                prevAssets.map((asset) =>
+              setAssets((prev) =>
+                prev.map((asset) =>
                   asset.id === selectedAsset.id
                     ? { ...asset, ...updatedAsset }
                     : asset
                 )
               );
-              setFilteredAssets((prevFiltered) =>
-                prevFiltered.map((asset) =>
+              setFilteredAssets((prev) =>
+                prev.map((asset) =>
                   asset.id === selectedAsset.id
                     ? { ...asset, ...updatedAsset }
                     : asset
                 )
               );
             } else {
-              // Create new asset (optional, based on your current setup)
               const newAsset = await createAsset(data, token);
               message.success("Asset created successfully");
-
-              // Add the new asset to the list
-              setAssets((prevAssets) => [...prevAssets, newAsset]);
-              setFilteredAssets((prevFiltered) => [...prevFiltered, newAsset]);
+              setAssets((prev) => [...prev, newAsset]);
+              setFilteredAssets((prev) => [...prev, newAsset]);
             }
-            setModalVisible(false); // Close modal
+            setModalVisible(false);
           } catch (error) {
             console.error("Failed to save asset:", error);
             message.error("Failed to save asset");
@@ -248,6 +257,12 @@ export function AssetsPage() {
           }
         }}
         asset={selectedAsset}
+      />
+
+      <ViewAssetModal
+        visible={imageModalVisible}
+        onClose={handleImageModalClose}
+        selectedAsset={viewImage}
       />
     </DashboardLayout>
   );
