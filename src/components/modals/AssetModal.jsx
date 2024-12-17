@@ -1,20 +1,24 @@
 /* eslint-disable react/prop-types */
-import { useEffect } from "react";
-import { Modal, Button, Input, Form } from "antd";
-// import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Modal, Button, Input, Form, Upload, message } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 
-const AssetModal = ({ visible, onClose, asset, onSave }) => {
-  // State to manage form fields
+const AssetModal = ({ visible, onClose, asset, onSubmit }) => {
   const [form] = Form.useForm();
+  const [previewImage, setPreviewImage] = useState(asset?.image || null);
 
   useEffect(() => {
-    if (visible && asset) {
-      // Set the form values when the modal opens with an asset
-      form.setFieldsValue({
-        caption: asset.caption,
-        description: asset.description,
-        image: asset.image,
-      });
+    if (visible) {
+      form.resetFields(); // Reset fields to avoid carrying over data
+      if (asset) {
+        form.setFieldsValue({
+          caption: asset.caption,
+          description: asset.description,
+        });
+        setPreviewImage(asset.image);
+      } else {
+        setPreviewImage(null);
+      }
     }
   }, [visible, asset, form]);
 
@@ -22,13 +26,24 @@ const AssetModal = ({ visible, onClose, asset, onSave }) => {
     form
       .validateFields()
       .then((values) => {
-        // Call the onSave function to save the edited asset
-        onSave({ ...asset, ...values });
-        onClose(); // Close the modal after saving
+        const assetData = { ...values, image: previewImage }; // Combine form values and image
+        console.log("Submitting Asset Data:", assetData); // Debugging log
+        onSubmit(assetData);
+        onClose();
       })
-      .catch((info) => {
-        console.log("Validate Failed:", info);
+      .catch((error) => {
+        console.error("Validation Failed:", error);
+        message.error("Please fill in all required fields.");
       });
+  };
+
+  const handleImageUpload = (file) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPreviewImage(reader.result);
+    };
+    reader.readAsDataURL(file);
+    return false; // Prevent upload
   };
 
   return (
@@ -40,67 +55,65 @@ const AssetModal = ({ visible, onClose, asset, onSave }) => {
           Cancel
         </Button>,
         <Button key="submit" type="primary" onClick={handleSubmit}>
-          Save
+          {asset ? "Save Changes" : "Create Asset"}
         </Button>,
       ]}
-      width={600} // Adjust size as needed
+      width={600}
     >
-      {asset && (
-        <div className="flex flex-col items-center">
+      <div className="flex flex-col md:flex-row items-center gap-4">
+        {previewImage && (
           <img
-            src={asset.image}
-            alt="Asset"
-            className="w-full max-w-[500px] object-cover rounded-md mb-4"
+            src={previewImage}
+            alt="Asset Preview"
+            className="w-full max-w-[200px] object-cover rounded-md mb-4 md:mb-0"
           />
-          <h3 className="text-xl font-semibold">{asset.caption}</h3>
-          <p className="text-gray-500">{asset.description}</p>
-
-          {/* Asset Edit Form */}
-          <Form
-            form={form}
-            layout="vertical"
-            name="assetForm"
-            initialValues={{
-              caption: asset.caption,
-              description: asset.description,
-              image: asset.image,
-            }}
+        )}
+        <Form
+          form={form}
+          layout="vertical"
+          name="assetForm"
+          initialValues={{
+            caption: asset?.caption || "",
+            description: asset?.description || "",
+          }}
+          className="w-full md:w-1/2"
+        >
+          <Form.Item
+            label="Caption"
+            name="caption"
+            rules={[
+              { required: true, message: "Please enter the asset caption!" },
+            ]}
           >
-            <Form.Item
-              label="Caption"
-              name="caption"
-              rules={[
-                { required: true, message: "Please enter the asset caption!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
+            <Input placeholder="Enter asset caption" />
+          </Form.Item>
 
-            <Form.Item
-              label="Description"
-              name="description"
-              rules={[
-                { required: true, message: "Please enter a description!" },
-              ]}
-            >
-              <Input.TextArea rows={4} />
-            </Form.Item>
+          <Form.Item
+            label="Description"
+            name="description"
+            rules={[{ required: true, message: "Please enter a description!" }]}
+          >
+            <Input.TextArea rows={4} placeholder="Enter asset description" />
+          </Form.Item>
 
-            <Form.Item
-              label="Image URL"
-              name="image"
-              rules={[
-                {
-                  required: true,
-                  message: "Please provide the asset image URL!",
-                },
-              ]}
+          <Form.Item label="Upload Image">
+            <Upload
+              listType="picture-card"
+              showUploadList={false}
+              beforeUpload={handleImageUpload}
             >
-              <Input />
-            </Form.Item>
-          </Form>
-        </div>
-      )}
+              {previewImage ? (
+                <Button type="text">Replace Image</Button>
+              ) : (
+                <div>
+                  <PlusOutlined />
+                  <div style={{ marginTop: 8 }}>Upload</div>
+                </div>
+              )}
+            </Upload>
+          </Form.Item>
+        </Form>
+      </div>
     </Modal>
   );
 };

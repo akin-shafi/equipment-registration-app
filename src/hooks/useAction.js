@@ -358,7 +358,7 @@ export const fetchAssetsByinstitutionId = async (institutionId, token) => {
 
     const data = await response.json();
     // const data = result.institutions;
-    console.log("fetchInstitution data by Id", data);
+    // console.log("fetchInstitution data by Id", data);
     // Ensure that data is always an array
     return Array.isArray(data) ? data : [];
   } catch (error) {
@@ -395,6 +395,11 @@ export const createContact = async (data, token) => {
 
 // PUT update a contact by ID
 export const updateContact = async (id, data, token) => {
+  if (!id || !data || !token) {
+    console.error("Invalid arguments:", { id, data, token });
+    throw new Error("Missing required arguments for updateContact");
+  }
+
   const response = await fetch(`${API_BASE_URL}/contact-person/${id}`, {
     method: "PUT",
     headers: {
@@ -403,7 +408,12 @@ export const updateContact = async (id, data, token) => {
     },
     body: JSON.stringify(data),
   });
-  if (!response.ok) throw new Error("Failed to update contact");
+
+  if (!response.ok) {
+    console.error("Failed to update contact. Response:", await response.text());
+    throw new Error("Failed to update contact");
+  }
+
   return response.json();
 };
 
@@ -434,7 +444,7 @@ export const fetchContactsByInstitutionId = async (institutionId, token) => {
     }
 
     const data = await response.json();
-    console.log("fetchContactsByInstitutionId data", data);
+    // console.log("fetchContactsByInstitutionId data", data);
 
     // Ensure that data is always an array
     return Array.isArray(data) ? data : [];

@@ -24,7 +24,6 @@ export function ContactPage() {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedContact, setSelectedContact] = useState(null);
 
-  // Memoized fetchData function to prevent unnecessary re-renders
   const fetchData = useCallback(async () => {
     if (!token) {
       console.warn("No token available to fetch contacts.");
@@ -35,7 +34,7 @@ export function ContactPage() {
     try {
       const result = await fetchContactsByInstitutionId(id, token);
       setContacts(result);
-      setFilteredContacts(result); // Update filteredContacts for the table
+      setFilteredContacts(result);
     } catch (error) {
       console.error("Failed to fetch contacts:", error);
       message.error("Failed to load contacts");
@@ -44,29 +43,25 @@ export function ContactPage() {
     }
   }, [id, token]);
 
-  // Add new contact handler
   const handleAddContact = () => {
-    setSelectedContact(null); // Ensure the modal is for adding a new contact
-    setModalVisible(true); // Open the modal
+    setSelectedContact(null);
+    setModalVisible(true);
   };
 
-  // View contact handler
   const handleView = (contact) => {
     setSelectedContact(contact);
     setModalVisible(true);
   };
 
-  // Edit contact handler
   const handleEdit = (contact) => {
     setSelectedContact(contact);
     setModalVisible(true);
   };
 
-  // Delete contact handler
   const handleDelete = async (contactId) => {
     setLoading(true);
     try {
-      await deleteContactById(contactId);
+      await deleteContactById(contactId, token); // Pass token
       message.success("Contact deleted successfully");
       setContacts(contacts.filter((contact) => contact.id !== contactId));
       setFilteredContacts(
@@ -80,21 +75,16 @@ export function ContactPage() {
     }
   };
 
-  // Close modal handler
   const handleModalClose = () => {
     setModalVisible(false);
     setSelectedContact(null);
-
-    // Fetch contacts again after the modal is closed to refresh the table state
     fetchData();
   };
 
-  // Fetch contacts on initial load or when `token` or `id` changes
   useEffect(() => {
     fetchData();
-  }, [fetchData]); // Only depend on fetchData
+  }, [fetchData]);
 
-  // Columns for the contacts table
   const columns = [
     {
       title: "Full name",
@@ -193,20 +183,23 @@ export function ContactPage() {
         </div>
       </div>
 
-      {/* Pass the selectedContact and other handlers to ContactPersonModal */}
       <ContactPersonModal
         visible={modalVisible}
+        mode={selectedContact ? "edit" : "create"}
         onClose={handleModalClose}
         onSave={(contactData) => {
-          const saveContact = selectedContact ? updateContact : createContact;
-          saveContact(contactData)
+          const saveContact = selectedContact
+            ? () => updateContact(selectedContact.id, contactData, token) // Fix: pass id, data, and token
+            : () => createContact(contactData, token);
+
+          saveContact()
             .then(() => {
               message.success(
                 selectedContact
                   ? "Contact updated successfully"
                   : "Contact added successfully"
               );
-              handleModalClose(); // Close modal after saving
+              handleModalClose();
             })
             .catch((error) => {
               console.error("Failed to save contact:", error);

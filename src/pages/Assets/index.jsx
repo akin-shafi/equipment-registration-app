@@ -203,7 +203,50 @@ export function AssetsPage() {
       <AssetModal
         visible={modalVisible}
         onClose={handleModalClose}
-        onSubmit={selectedAsset ? updateAsset : createAsset}
+        onSubmit={async (data) => {
+          setLoading(true);
+          try {
+            if (selectedAsset) {
+              // Update existing asset
+              const updatedAsset = await updateAsset(
+                selectedAsset.id,
+                data,
+                token
+              );
+              message.success("Asset updated successfully");
+
+              // Update the asset list with the edited asset
+              setAssets((prevAssets) =>
+                prevAssets.map((asset) =>
+                  asset.id === selectedAsset.id
+                    ? { ...asset, ...updatedAsset }
+                    : asset
+                )
+              );
+              setFilteredAssets((prevFiltered) =>
+                prevFiltered.map((asset) =>
+                  asset.id === selectedAsset.id
+                    ? { ...asset, ...updatedAsset }
+                    : asset
+                )
+              );
+            } else {
+              // Create new asset (optional, based on your current setup)
+              const newAsset = await createAsset(data, token);
+              message.success("Asset created successfully");
+
+              // Add the new asset to the list
+              setAssets((prevAssets) => [...prevAssets, newAsset]);
+              setFilteredAssets((prevFiltered) => [...prevFiltered, newAsset]);
+            }
+            setModalVisible(false); // Close modal
+          } catch (error) {
+            console.error("Failed to save asset:", error);
+            message.error("Failed to save asset");
+          } finally {
+            setLoading(false);
+          }
+        }}
         asset={selectedAsset}
       />
     </DashboardLayout>
