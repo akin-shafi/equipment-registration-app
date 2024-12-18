@@ -45,15 +45,6 @@ export function UserManagementPage() {
     fetchData();
   }, [token]);
 
-  const handleSearch = (value) => {
-    setSearchText(value);
-    const filtered = users.filter((user) =>
-      user.fullname.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredUsers(filtered);
-    setPage(1); // Reset to first page when searching
-  };
-
   const handlePageChange = (page, pageSize) => {
     setPage(page);
     setPageSize(pageSize);
@@ -104,12 +95,36 @@ export function UserManagementPage() {
     }
   };
 
+  const handleSearch = (value) => {
+    setSearchText(value);
+    const lowercasedValue = value.toLowerCase();
+
+    const filtered = users.filter((user) =>
+      Object.values(user).some((field) =>
+        String(field).toLowerCase().includes(lowercasedValue)
+      )
+    );
+
+    setFilteredUsers(filtered);
+    setPage(1); // Reset to the first page when searching
+  };
+
   const columns = [
+    {
+      title: "S/N",
+      key: "serialNumber",
+      render: (_, __, index) => index + 1, // Display the index starting from 1
+    },
     {
       title: "Full Name",
       dataIndex: "fullname",
       key: "fullname",
       sorter: (a, b) => a.fullname.localeCompare(b.fullname),
+    },
+    {
+      title: "Group",
+      dataIndex: "group",
+      key: "group",
     },
     {
       title: "Email",

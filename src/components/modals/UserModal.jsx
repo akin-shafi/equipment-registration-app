@@ -64,6 +64,12 @@ export function UserModal({
     form.resetFields();
   };
 
+  // Generate group options dynamically
+  const groupOptions = Array.from({ length: 11 }, (_, i) => ({
+    value: `Group ${i + 1}`,
+    label: `Group ${i + 1}`,
+  }));
+
   return (
     <Modal
       open={visible}
@@ -162,6 +168,14 @@ export function UserModal({
             }
             options={institutions}
           />
+        </Form.Item>
+
+        <Form.Item
+          name="group"
+          label="Group"
+          rules={[{ required: true, message: "Please select a group" }]}
+        >
+          <Select placeholder="Select group" options={groupOptions} />
         </Form.Item>
       </Form>
     </Modal>
