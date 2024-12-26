@@ -66,13 +66,26 @@ export function ListEquipments() {
     fetchEquipmentData();
   }, [id, token]);
 
+  // const handleSearch = (value) => {
+  //   setSearchText(value);
+  //   const filtered = equipment.filter((item) =>
+  //     item.name.toLowerCase().includes(value.toLowerCase())
+  //   );
+  //   setFilteredEquipment(filtered);
+  //   setPage(1);
+  // };
   const handleSearch = (value) => {
     setSearchText(value);
+    const lowercasedValue = value.toLowerCase();
+
     const filtered = equipment.filter((item) =>
-      item.name.toLowerCase().includes(value.toLowerCase())
+      Object.values(item).some((field) =>
+        String(field).toLowerCase().includes(lowercasedValue)
+      )
     );
+
     setFilteredEquipment(filtered);
-    setPage(1);
+    setPage(1); // Reset to the first page when searching
   };
 
   const handleAddEquipment = () => {

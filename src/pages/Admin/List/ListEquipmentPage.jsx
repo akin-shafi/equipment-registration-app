@@ -67,13 +67,27 @@ export function ListEquipmentPage() {
   }, [selectedInstitutionId, token]);
 
   // Handle search input
+  // const handleSearch = (value) => {
+  //   setSearchText(value);
+  //   const filtered = equipment.filter((item) =>
+  //     item.name.toLowerCase().includes(value.toLowerCase())
+  //   );
+  //   setFilteredEquipment(filtered);
+  //   setPage(1); // Reset pagination on search
+  // };
+
   const handleSearch = (value) => {
     setSearchText(value);
+    const lowercasedValue = value.toLowerCase();
+
     const filtered = equipment.filter((item) =>
-      item.name.toLowerCase().includes(value.toLowerCase())
+      Object.values(item).some((field) =>
+        String(field).toLowerCase().includes(lowercasedValue)
+      )
     );
+
     setFilteredEquipment(filtered);
-    setPage(1); // Reset pagination on search
+    setPage(1); // Reset to the first page when searching
   };
 
   // Handle dropdown change for institution
@@ -117,6 +131,18 @@ export function ListEquipmentPage() {
       dataIndex: "taxonomy",
       key: "taxonomy",
     },
+    // {
+    //   title: "Image",
+    //   dataIndex: "image",
+    //   key: "image",
+    //   render: (url) => (
+    //     <img
+    //       src={url}
+    //       alt="Asset"
+    //       style={{ width: "100px", height: "60px", objectFit: "cover" }}
+    //     />
+    //   ),
+    // },
     {
       title: "Availability",
       dataIndex: "availability",
