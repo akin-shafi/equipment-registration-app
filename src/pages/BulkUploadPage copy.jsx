@@ -10,13 +10,12 @@ export function BulkUploadPage({ institutionId, applicationNo }) {
   const token = session?.token;
   const [excelFile, setExcelFile] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const [startMessage, setStartMessage] = useState("");
-  const [acceptedMessage, setAcceptedMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isUploading, setIsUploading] = useState(false); // State for tracking upload process
   const [isDownloading, setIsDownloading] = useState(false);
   const fileInputRef = useRef(null);
   const [skippedRows, setSkippedRows] = useState([]); // State to track skipped rows
+
 
   const handleBulkUploadSubmit = async (e) => {
     e.preventDefault();
@@ -33,33 +32,14 @@ export function BulkUploadPage({ institutionId, applicationNo }) {
 
     setIsUploading(true);
     setErrorMessage("");
-    setStartMessage("");
     setSuccessMessage("");
-    setAcceptedMessage("");
     setSkippedRows([]);
 
     try {
-      const result = await sendBulkEquipment(formData, token, (chunkData) => {
-        if (chunkData.status === 201) {
-          setStartMessage(chunkData.message);
-        }
+      const result = await sendBulkEquipment(formData, token);
 
-        if (chunkData.status === 202) {
-          setAcceptedMessage(chunkData.message);
-        }
-
-        if (chunkData.status === 200) {
-          setSuccessMessage(chunkData.message);
-          setSkippedRows(chunkData.skippedRows || []);
-        }
-
-        if (chunkData.status === 501) {
-          setErrorMessage(chunkData.message);
-        }
-      });
-
-      if (result.statusCode === 200) {
-        setSuccessMessage("File uploaded successfully");
+      if (result?.statusCode === 200) {
+        setSuccessMessage(result.message);
         setSkippedRows(result.skippedRows || []);
       } else {
         setErrorMessage(result?.message || "Unknown error occurred.");
@@ -214,33 +194,37 @@ export function BulkUploadPage({ institutionId, applicationNo }) {
           </div>
 
           {/* Error Message Display */}
-
-          {startMessage && (
-            <div className="text-blue-500 mb-4">
-              <strong>{startMessage}</strong>
-            </div>
-          )}
           {errorMessage && (
             <div className="text-red-500 mb-4">
               <strong>Error:</strong> {errorMessage}
             </div>
           )}
 
-          {acceptedMessage && (
-            <div className="text-gray-900 mb-4">
-              <strong>Status:</strong> {acceptedMessage}
-            </div>
-          )}
           {/* Success Message Display */}
           {successMessage && (
             <div className="text-green-500 mb-4">
               <strong>Success:</strong> {successMessage}
             </div>
           )}
+
+          {/* Skipped Rows Section */}
           {skippedRows.length > 0 && (
-            <div className="skipped-rows text-red-500 ">
-              <h4>Skipped Rows:</h4>
-              <ul>
+            <div className="mt-6 p-4 bg-yellow-100 rounded-md">
+              <h4 className="font-bold text-yellow-700">Skipped Rows</h4>
+              <p className="text-sm text-yellow-600">
+                The following rows were skipped during the upload process:
+              </p>
+              <ul className="mt-2 list-decimal list-inside list-inside">
+                {skippedRows.map((row, index) => (
+                  <li key={index} className="text-yellow-800">
+                    {typeof row === "string"
+                      ? row // Display reason if it's a string
+                      : `Row ${row.serialNo}: ${
+                          row.reason || "Duplicate record"
+                        }`}
+                  </li>
+                ))}
+
                 {skippedRows.map((row, index) => (
                   <li key={index}>
                     Row {row.serialNo}: {row.reason || "Duplicate record"}

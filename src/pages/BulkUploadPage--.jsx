@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useRef } from "react";
 import { useSession } from "@/hooks/useSession";
-import { sendBulkEquipment } from "../hooks/useAction";
 import UploadedFile from "@/components/custom/UploadedFile";
 import { UploadIcon } from "@/components/Icon";
 
@@ -10,13 +9,12 @@ export function BulkUploadPage({ institutionId, applicationNo }) {
   const token = session?.token;
   const [excelFile, setExcelFile] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const [startMessage, setStartMessage] = useState("");
-  const [acceptedMessage, setAcceptedMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [isUploading, setIsUploading] = useState(false); // State for tracking upload process
+  const [isUploading, setIsUploading] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const fileInputRef = useRef(null);
-  const [skippedRows, setSkippedRows] = useState([]); // State to track skipped rows
+  const [skippedRows, setSkippedRows] = useState([]);
+  const [realTimeMessages, setRealTimeMessages] = useState([]);
 
   const handleBulkUploadSubmit = async (e) => {
     e.preventDefault();
@@ -33,36 +31,46 @@ export function BulkUploadPage({ institutionId, applicationNo }) {
 
     setIsUploading(true);
     setErrorMessage("");
-    setStartMessage("");
     setSuccessMessage("");
-    setAcceptedMessage("");
     setSkippedRows([]);
+    setRealTimeMessages([]);
 
     try {
-      const result = await sendBulkEquipment(formData, token, (chunkData) => {
-        if (chunkData.status === 201) {
-          setStartMessage(chunkData.message);
-        }
-
-        if (chunkData.status === 202) {
-          setAcceptedMessage(chunkData.message);
-        }
-
-        if (chunkData.status === 200) {
-          setSuccessMessage(chunkData.message);
-          setSkippedRows(chunkData.skippedRows || []);
-        }
-
-        if (chunkData.status === 501) {
-          setErrorMessage(chunkData.message);
-        }
+      const response = await fetch("/equipment/bulk-upload", {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      if (result.statusCode === 200) {
-        setSuccessMessage("File uploaded successfully");
-        setSkippedRows(result.skippedRows || []);
+      if (response.ok) {
+        const eventSource = new EventSource("/equipment/bulk-upload/events");
+
+        eventSource.onmessage = (event) => {
+          const parsedData = JSON.parse(event.data);
+          setRealTimeMessages((prevMessages) => [...prevMessages, parsedData]);
+
+          if (parsedData.message === "Upload completed") {
+            setSuccessMessage("Upload completed successfully.");
+            eventSource.close();
+            setIsUploading(false);
+          } else if (parsedData.error) {
+            setSkippedRows((prevSkippedRows) => [
+              ...prevSkippedRows,
+              parsedData,
+            ]);
+          }
+        };
+
+        eventSource.onerror = (error) => {
+          console.error("EventSource error: ", error);
+          setErrorMessage("An error occurred during real-time updates.");
+          eventSource.close();
+        };
       } else {
-        setErrorMessage(result?.message || "Unknown error occurred.");
+        const errorData = await response.json();
+        setErrorMessage(errorData.message || "Unknown error occurred.");
       }
     } catch (error) {
       setErrorMessage(error.message || "Error during bulk upload.");
@@ -149,7 +157,6 @@ export function BulkUploadPage({ institutionId, applicationNo }) {
           </button>
         </div>
       </div>
-
       <div className="mt-8 w-full bg-white p-6 rounded-lg shadow-md">
         <div className="grid grid-cols-2 gap-4 mb-4">
           <ol className="border shadow-md px-6 py-3 list-decimal list-inside">
@@ -203,65 +210,74 @@ export function BulkUploadPage({ institutionId, applicationNo }) {
           </ol>
         </div>
 
-        <h3 className="text-xl font-bold mb-4">Bulk Equipment Upload</h3>
-        <form onSubmit={handleBulkUploadSubmit}>
-          <div className="my-5">
-            <p className="font-azoSansRegular">
-              Please ensure that the excel file you upload is well filled
-              following instructions as stated above.
-            </p>
-            {renderUploadSection("excel", "excel File")}
-          </div>
+        <div className="mt-8 w-full bg-white p-6 rounded-lg shadow-md">
+          <h3 className="text-xl font-bold mb-4">Bulk Equipment Upload</h3>
+          <form onSubmit={handleBulkUploadSubmit}>
+            <div className="my-5">
+              <p className="font-azoSansRegular">
+                Please ensure that the excel file you upload is well filled
+                following instructions as stated above.
+              </p>
+              {renderUploadSection("excel", "excel File")}
+            </div>
+            {/* Error Message Display */}
+            {errorMessage && (
+              <div className="text-red-500 mb-4">
+                <strong>Error:</strong> {errorMessage}
+              </div>
+            )}
 
-          {/* Error Message Display */}
+            {/* Success Message Display */}
+            {successMessage && (
+              <div className="text-green-500 mb-4">
+                <strong>Success:</strong> {successMessage}
+              </div>
+            )}
 
-          {startMessage && (
-            <div className="text-blue-500 mb-4">
-              <strong>{startMessage}</strong>
-            </div>
-          )}
-          {errorMessage && (
-            <div className="text-red-500 mb-4">
-              <strong>Error:</strong> {errorMessage}
-            </div>
-          )}
+            {/* Real-Time Messages */}
+            {realTimeMessages.length > 0 && (
+              <div className="mt-6 p-4 bg-blue-100 rounded-md">
+                <h4 className="font-bold text-blue-700">Real-Time Updates</h4>
+                <ul className="mt-2 list-decimal list-inside">
+                  {realTimeMessages.map((message, index) => (
+                    <li key={index} className="text-blue-800">
+                      {JSON.stringify(message)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
-          {acceptedMessage && (
-            <div className="text-gray-900 mb-4">
-              <strong>Status:</strong> {acceptedMessage}
-            </div>
-          )}
-          {/* Success Message Display */}
-          {successMessage && (
-            <div className="text-green-500 mb-4">
-              <strong>Success:</strong> {successMessage}
-            </div>
-          )}
-          {skippedRows.length > 0 && (
-            <div className="skipped-rows text-red-500 ">
-              <h4>Skipped Rows:</h4>
-              <ul>
-                {skippedRows.map((row, index) => (
-                  <li key={index}>
-                    Row {row.serialNo}: {row.reason || "Duplicate record"}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+            {/* Skipped Rows Section */}
+            {skippedRows.length > 0 && (
+              <div className="mt-6 p-4 bg-yellow-100 rounded-md">
+                <h4 className="font-bold text-yellow-700">Skipped Rows</h4>
+                <p className="text-sm text-yellow-600">
+                  The following rows were skipped during the upload process:
+                </p>
+                <ul className="mt-2 list-decimal list-inside">
+                  {skippedRows.map((row, index) => (
+                    <li key={index}>
+                      Row {row.row.serialNo}: {row.error || "Duplicate record"}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
-          <button
-            type="submit"
-            className={`w-full mt-4 text-white px-4 py-2 rounded-md ${
-              isUploading
-                ? "bg-gray-500 cursor-not-allowed"
-                : "bg-appGreen hover:bg-appGreenLight"
-            }`}
-            disabled={isUploading}
-          >
-            {isUploading ? "Processing..." : "Upload excel sheet"}
-          </button>
-        </form>
+            <button
+              type="submit"
+              className={`w-full mt-4 text-white px-4 py-2 rounded-md ${
+                isUploading
+                  ? "bg-gray-500 cursor-not-allowed"
+                  : "bg-appGreen hover:bg-appGreenLight"
+              }`}
+              disabled={isUploading}
+            >
+              {isUploading ? "Processing..." : "Upload excel sheet"}
+            </button>
+          </form>
+        </div>
       </div>
     </>
   );

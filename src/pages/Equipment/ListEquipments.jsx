@@ -52,7 +52,7 @@ export function ListEquipments() {
       setLoading(true);
       try {
         const equipmentData = await fetchEquipmentsByInstituteId(id, token);
-        console.log("equipmentData", equipmentData);
+        // console.log("equipmentData", equipmentData);
 
         setEquipments(equipmentData);
         setFilteredEquipment(equipmentData);

@@ -89,7 +89,7 @@ export const fetchInstitution = async (token) => {
 
     const result = await response.json();
     const data = result.institutions;
-    console.log("fetch All Institution data", data);
+    // console.log("fetch All Institution data", data);
     // Ensure that data is always an array
     return Array.isArray(data) ? data : [];
   } catch (error) {
@@ -223,7 +223,7 @@ export const fetchEquipment = async (token) => {
 
     const result = await response.json();
     const data = result.equipments;
-    console.log("Equipment", data);
+    // console.log("Equipment", data);
     // Ensure that data is always an array
     return Array.isArray(data) ? data : [];
   } catch (error) {
@@ -255,37 +255,73 @@ export const fetchEquipmentsByInstituteId = async (institutionId, token) => {
   }
 };
 
-export const sendBulkEquipment = async (data, token) => {
+export const sendBulkEquipment = async (data, token, setStatus) => {
   try {
     const response = await fetch(`${API_BASE_URL}/equipment/bulk-upload`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        // Don't manually set Content-Type when sending FormData
       },
-      body: data, // Directly send FormData here
+      body: data, // Send FormData
     });
 
-    if (response.ok) {
-      console.log("Bulk upload successful");
-      const result = await response.json();
-
-      // Check if there are skipped rows
-      if (result.skippedRows && result.skippedRows.length > 0) {
-        console.warn("Some rows were skipped due to duplicates:");
-        console.table(result.skippedRows); // Log skipped rows in a table format
-      }
-
-      return result; // Return the full response including skipped rows
-    } else {
-      console.error("Bulk upload failed");
+    if (!response.ok) {
       const errorResponse = await response.json();
-      // Return error details
       return {
         statusCode: response.status,
         message: errorResponse.message || "Unknown error occurred",
       };
     }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+
+    const result = { messages: [], skippedRows: [] };
+
+    while (!done) {
+      const { value, done: readerDone } = await reader.read();
+      done = readerDone;
+      const chunk = decoder.decode(value, { stream: true });
+
+      if (chunk) {
+        const parts = chunk.split("\n");
+
+        for (let part of parts) {
+          if (part.trim()) {
+            try {
+              const data = JSON.parse(part);
+              console.log("chunk data...", data);
+
+              // Collect skippedRows if present
+              if (data.skippedRows && Array.isArray(data.skippedRows)) {
+                console.log("skippedRows", data.skippedRows);
+                result.skippedRows.push(...data.skippedRows);
+              }
+
+              // Collect messages for status updates
+              if (data.message) {
+                console.log("message", data.message);
+                result.messages.push(data.message);
+              }
+
+              // Send updates to the frontend
+              if (setStatus) {
+                setStatus(data); // Notify the frontend of this chunk's status
+              }
+            } catch (error) {
+              console.error("Error parsing chunk:", part, error);
+            }
+          }
+        }
+      }
+    }
+
+    return {
+      statusCode: 200,
+      message: result.messages.join(", "),
+      skippedRows: result.skippedRows, // Final aggregated skippedRows
+    };
   } catch (error) {
     console.error("Error uploading bulk data", error);
     throw new Error(error.message || "Error during bulk upload");

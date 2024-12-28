@@ -73,7 +73,7 @@ export function SingleUploadPage() {
         body: JSON.stringify(payload),
       });
       const data = await response.json();
-      console.log("Equipment submitted successfully:", data);
+      // console.log("Equipment submitted successfully:", data);
     } catch (error) {
       console.error("Error submitting equipment:", error);
     }
