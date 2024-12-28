@@ -59,7 +59,12 @@ export function BulkUploadPage({ institutionId, applicationNo }) {
       });
 
       if (result.statusCode === 200) {
-        setSuccessMessage("File uploaded successfully");
+        const savedRecords = result.totalSaved || 0;
+        const skippedRecords = result.totalSkipped || 0;
+        setSuccessMessage(
+          `${savedRecords} record saved
+           and ${skippedRecords} duplicate record(s) skipped`
+        );
         setSkippedRows(result.skippedRows || []);
       } else {
         setErrorMessage(result?.message || "Unknown error occurred.");
@@ -228,13 +233,13 @@ export function BulkUploadPage({ institutionId, applicationNo }) {
 
           {acceptedMessage && (
             <div className="text-gray-900 mb-4">
-              <strong>Status:</strong> {acceptedMessage}
+              <strong>Progress:</strong> {acceptedMessage}
             </div>
           )}
           {/* Success Message Display */}
           {successMessage && (
             <div className="text-green-500 mb-4">
-              <strong>Success:</strong> {successMessage}
+              <strong>File uploaded successfully: {successMessage}</strong>
             </div>
           )}
           {skippedRows.length > 0 && (

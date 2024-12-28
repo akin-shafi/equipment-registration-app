@@ -277,7 +277,12 @@ export const sendBulkEquipment = async (data, token, setStatus) => {
     const decoder = new TextDecoder();
     let done = false;
 
-    const result = { messages: [], skippedRows: [] };
+    const result = {
+      messages: [],
+      skippedRows: [],
+      totalSaved: 0,
+      totalSkipped: 0,
+    };
 
     while (!done) {
       const { value, done: readerDone } = await reader.read();
@@ -291,18 +296,23 @@ export const sendBulkEquipment = async (data, token, setStatus) => {
           if (part.trim()) {
             try {
               const data = JSON.parse(part);
-              console.log("chunk data...", data);
 
               // Collect skippedRows if present
               if (data.skippedRows && Array.isArray(data.skippedRows)) {
-                console.log("skippedRows", data.skippedRows);
                 result.skippedRows.push(...data.skippedRows);
               }
 
               // Collect messages for status updates
               if (data.message) {
-                console.log("message", data.message);
                 result.messages.push(data.message);
+              }
+
+              // Track totalSaved and totalSkipped
+              if (data.totalSaved !== undefined) {
+                result.totalSaved = data.totalSaved;
+              }
+              if (data.totalSkipped !== undefined) {
+                result.totalSkipped = data.totalSkipped;
               }
 
               // Send updates to the frontend
@@ -317,9 +327,12 @@ export const sendBulkEquipment = async (data, token, setStatus) => {
       }
     }
 
+    console.log("All result", result);
     return {
       statusCode: 200,
       message: result.messages.join(", "),
+      totalSaved: result.totalSaved,
+      totalSkipped: result.totalSkipped,
       skippedRows: result.skippedRows, // Final aggregated skippedRows
     };
   } catch (error) {
