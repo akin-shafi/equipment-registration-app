@@ -239,12 +239,14 @@ export function BulkUploadPage({ institutionId, applicationNo }) {
           {/* Success Message Display */}
           {successMessage && (
             <div className="text-green-500 mb-4">
-              <strong>File uploaded successfully: {successMessage}</strong>
+              <strong>File upload complete: {successMessage}</strong>
             </div>
           )}
           {skippedRows.length > 0 && (
-            <div className="skipped-rows text-red-500 ">
-              <h4>Skipped Rows:</h4>
+            <div className="skipped-rows  ">
+              <h4 className="text-red-500">
+                <strong>Errors Found:</strong>
+              </h4>
               <ul>
                 {skippedRows.map((row, index) => (
                   <li key={index}>
