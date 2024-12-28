@@ -1,6 +1,6 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from "react";
+/* eslint-disable no-unused-vars */
+import { useEffect, useState, useMemo } from "react";
 import { useSession } from "@/hooks/useSession";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Table } from "antd";
@@ -53,51 +53,53 @@ export function AssessorPage() {
     // Add invite member logic here
   };
 
-  const columns = [
-    {
-      title: "Institution Name",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
-      render: (text) => (
-        <span title={text}>
-          {text.length > 40 ? `${text.slice(0, 40)}...` : text}
-        </span>
-      ),
-    },
-    {
-      title: "Institution Contact",
-      key: "contact",
-      render: (_, record) => `${record.email}, ${record.phone}`,
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (_, record) => (
-        <div className="flex gap-2">
-          <button
-            onClick={() => navigate(`/list-equipments/${record.id}/`)}
-            className="bg-gold text-white px-3 py-1 rounded hover:bg-appGreen"
-          >
-            Equipments
-          </button>
-          <button
-            onClick={() => navigate(`/assets/${record.id}`)}
-            className="bg-appGreen text-white px-3 py-1 rounded hover:bg-appGreenLight"
-          >
-            Site Photos
-          </button>
-
-          <button
-            onClick={() => navigate(`/contact/${record.id}`)}
-            className="bg-appGreen text-white px-3 py-1 rounded hover:bg-appGreenLight"
-          >
-            Contact Person
-          </button>
-        </div>
-      ),
-    },
-  ];
+  const columns = useMemo(
+    () => [
+      {
+        title: "Institution Name",
+        dataIndex: "name",
+        key: "name",
+        sorter: (a, b) => a.name.localeCompare(b.name),
+        render: (text) => (
+          <span title={text}>
+            {text.length > 40 ? `${text.slice(0, 40)}...` : text}
+          </span>
+        ),
+      },
+      {
+        title: "Institution Contact",
+        key: "contact",
+        render: (_, record) => `${record.email}, ${record.phone}`,
+      },
+      {
+        title: "Actions",
+        key: "actions",
+        render: (_, record) => (
+          <div className="flex gap-2">
+            <button
+              onClick={() => navigate(`/list-equipments/${record.id}/`)}
+              className="bg-gold text-white px-3 py-1 rounded hover:bg-appGreen"
+            >
+              Equipments
+            </button>
+            <button
+              onClick={() => navigate(`/assets/${record.id}`)}
+              className="bg-appGreen text-white px-3 py-1 rounded hover:bg-appGreenLight"
+            >
+              Site Photos
+            </button>
+            <button
+              onClick={() => navigate(`/contact/${record.id}`)}
+              className="bg-appGreen text-white px-3 py-1 rounded hover:bg-appGreenLight"
+            >
+              Contact Person
+            </button>
+          </div>
+        ),
+      },
+    ],
+    [navigate]
+  );
 
   return (
     <DashboardLayout>
@@ -127,7 +129,7 @@ export function AssessorPage() {
           </div>
           <div className="md:basis-[30%] basis-0 md:flex w-full h-full items-center justify-center">
             <button
-              // onClick={openModal}
+              onClick={openModal}
               className="py-[10px] px-[20px] bg-appGreen rounded-[100px] text-white"
             >
               Update Profile
@@ -146,6 +148,7 @@ export function AssessorPage() {
             loading={loading}
             className="custom-table mt-2"
             rowKey="id"
+            key={filteredInstitutions.length} // Force rerender on data update
           />
         </div>
       </div>

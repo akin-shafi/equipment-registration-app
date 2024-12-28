@@ -133,7 +133,6 @@ export function ListEquipments() {
       <div className="w-full h-[92vh] grid grid-rows-[10%_1fr] md:px-12 px-5 py-3">
         <div className="w-full">
           <BackBtn />
-
           <div className="flex justify-between">
             <h5 className="md:text-[24px] text-[18px] text-black font-medium text-uupercase mb-4 mt-4">
               Equipments
@@ -147,7 +146,6 @@ export function ListEquipments() {
               Add new Equipment
             </div>
           </div>
-
           <h5 className="md:text-[14px] text-[18px] text-black font-medium text-uupercase mb-4 mt-4">
             {institution ? institution.name : "Loading..."}
             <hr />
@@ -158,22 +156,22 @@ export function ListEquipments() {
               title="Equipment"
             />
           </div>
-
           <hr className="my-4" />
-
           <Input
             placeholder="Search equipment by name"
             value={searchText}
             onChange={(e) => handleSearch(e.target.value)}
             className="mb-4"
           />
-
           <Table
             columns={columns}
-            dataSource={filteredEquipment}
+            dataSource={filteredEquipment.slice(
+              (page - 1) * pageSize,
+              page * pageSize
+            )}
             loading={loading}
             rowKey="id"
-            pagination={false}
+            pagination={false} // Disable internal pagination since you are handling it manually
             onRow={(record) => ({
               onClick: () => navigate(`/equipment-details/${record.id}`),
             })}
