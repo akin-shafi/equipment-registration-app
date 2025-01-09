@@ -10,6 +10,7 @@ import {
 } from "@/hooks/useAction";
 import { SearchOutlined } from "@ant-design/icons";
 import { InstitutionModal } from "@/components/modals/InstitutionModal";
+import * as XLSX from "xlsx"; // Import xlsx library
 
 export function InstitutionManagementPage() {
   const { session } = useSession();
@@ -96,6 +97,13 @@ export function InstitutionManagementPage() {
     }
   };
 
+  const handleExport = () => {
+    const wb = XLSX.utils.book_new(); // Create a new workbook
+    const ws = XLSX.utils.json_to_sheet(filteredInstitutions); // Convert JSON to sheet
+    XLSX.utils.book_append_sheet(wb, ws, "Institutions"); // Append sheet to workbook
+    XLSX.writeFile(wb, "institutions.xlsx"); // Write the file to disk
+  };
+
   const columns = [
     {
       title: "S/N",
@@ -110,66 +118,14 @@ export function InstitutionManagementPage() {
       sorter: (a, b) => a.name.localeCompare(b.name),
       render: (_, record) => `${record.name}, ${record.initial}`,
     },
-
     {
-      title: "Contact",
-      key: "contact",
-      render: (text, record) => {
-        const { email, phone } = record;
-        return `${email}, ${phone}`;
-      },
-    },
-
-    {
-      title: "Location",
-      key: "location",
-      render: (text, record) => {
-        const { address, city, state, country } = record;
-        return `${address}, ${city}, ${state}, ${country}`;
-      },
-    },
-    {
-      title: "Accredited",
-      dataIndex: "isAccredited",
-      key: "isAccredited",
-      render: (isAccredited) => (isAccredited ? "Yes" : "No"),
-    },
-    {
-      title: "Created By",
-      dataIndex: "createdBy",
-      key: "createdBy",
-    },
-    {
-      title: "Created At",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      render: (text) => new Date(text).toLocaleDateString(),
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (_, record) => (
-        <>
-          <Button
-            type="link"
-            onClick={() => {
-              setSelectedInstitution(record);
-              setIsModalVisible(true);
-            }}
-          >
-            Edit
-          </Button>
-          <Popconfirm
-            title="Are you sure to delete this institution?"
-            onConfirm={() => handleDeleteInstitution(record.id)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button type="link" danger>
-              Delete
-            </Button>
-          </Popconfirm>
-        </>
+      title: "Equipment Status",
+      dataIndex: "equipmentStatus",
+      key: "equipmentStatus",
+      render: (equipmentStatus) => (
+        <span style={{ color: equipmentStatus ? "green" : "red" }}>
+          {equipmentStatus ? "Submitted" : "Not Submitted"}
+        </span>
       ),
     },
   ];
@@ -184,17 +140,26 @@ export function InstitutionManagementPage() {
       <div className="p-4">
         <div className="flex justify-between mb-10">
           <h2>Institution Management</h2>
-          <Button
-            type="primary"
-            className="bg-appGreen hover:bg-appGreenLight rounded-full"
-            style={{ marginLeft: "auto" }}
-            onClick={() => {
-              setSelectedInstitution(null);
-              setIsModalVisible(true);
-            }}
-          >
-            Add Institution
-          </Button>
+          <div className="flex">
+            <Button
+              type="primary"
+              className="bg-appGreen hover:bg-appGreenLight rounded-full"
+              style={{ marginLeft: "auto" }}
+              onClick={() => {
+                setSelectedInstitution(null);
+                setIsModalVisible(true);
+              }}
+            >
+              Add Institution
+            </Button>
+            <Button
+              type="default"
+              className="ml-2 bg-white hover:bg-gray-200 rounded-full"
+              onClick={handleExport}
+            >
+              Export All as Excel
+            </Button>
+          </div>
         </div>
         <Input
           placeholder="Search by institution name"
