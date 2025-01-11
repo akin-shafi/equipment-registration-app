@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
-import { Table, Input, Button, Pagination, Popconfirm, message } from "antd";
+import { Table, Input, Button, Pagination, message } from "antd";
 import { useSession } from "@/hooks/useSession";
 import {
   fetchInstitution,
   createInstitution,
   updateInstitution,
-  deleteInstitution,
+  // deleteInstitution,
 } from "@/hooks/useAction";
 import { SearchOutlined } from "@ant-design/icons";
 import { InstitutionModal } from "@/components/modals/InstitutionModal";
@@ -80,22 +80,22 @@ export function InstitutionManagementPage() {
     }
   };
 
-  const handleDeleteInstitution = async (id) => {
-    setLoading(true);
-    try {
-      await deleteInstitution(id, token);
-      message.success("Institution deleted successfully");
+  // const handleDeleteInstitution = async (id) => {
+  //   setLoading(true);
+  //   try {
+  //     await deleteInstitution(id, token);
+  //     message.success("Institution deleted successfully");
 
-      const result = await fetchInstitution(token);
-      setInstitutions(result);
-      setFilteredInstitutions(result);
-    } catch (error) {
-      console.error("Failed to delete institution:", error);
-      message.error("Failed to delete institution");
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     const result = await fetchInstitution(token);
+  //     setInstitutions(result);
+  //     setFilteredInstitutions(result);
+  //   } catch (error) {
+  //     console.error("Failed to delete institution:", error);
+  //     message.error("Failed to delete institution");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleExport = () => {
     const wb = XLSX.utils.book_new(); // Create a new workbook
