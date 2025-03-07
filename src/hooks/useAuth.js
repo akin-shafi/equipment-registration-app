@@ -136,4 +136,3 @@ export const resetPassword = async (token, newPassword) => {
   return result;
 };
 
-

@@ -109,9 +109,6 @@ export const fetchInstitutionNames = async (token) => {
     }
 
     const data = await response.json();
-    // const data = result.institutions;
-    // console.log("fetchInstitution Name", data);
-    // Ensure that data is always an array
     return Array.isArray(data) ? data : [];
   } catch (error) {
     throw new Error(error.message || "Error fetching room types.");
